@@ -1,0 +1,4 @@
+*.class
+/target/
+/actual/
+.DS_Store
