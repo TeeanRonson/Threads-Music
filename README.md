@@ -7,7 +7,7 @@ SongFinder Labs and Project
 Lab 3 is the first component of the large project you will implement in the second half of the semester. You will use this same repository for the remainder of the semester. As projects are assigned, links to their specifications will be posted here:
 
 - Project Release 1 - Thread-Safe Music Library
-- Project Release 2 - Song Search and Web-Basic Interface
+- Project Release 2 - Song Search and Web-Based Interface
 - Project Release 3 - Advanced Features
 
 This repository contains the following:
