@@ -1,6 +1,9 @@
 Lab 3 - Music Library
 =====================
 
+### Functionality Deadline: Wednesday October 18, 2017 - 5pm
+### Final Deadline: Sunday, October 29, 2017 - 5pm
+
 For this project, you will implement a program to build a music library data structure to store the information in the last.fm data set available from the [Million Song Dataset](http://labrosa.ee.columbia.edu/millionsong/lastfm).
 
 In this project, you will practice reading and writing files, parsing JSON data, and designing complex data structures. The most important element of this project is to design an efficient data structure.
@@ -39,7 +42,7 @@ In this project, you will practice reading and writing files, parsing JSON data,
   Aerosmith - Cryin'
   ```
 
- - Data sorted by `tag` will list the tag, followed by `:`, followed by a space, followed by the track_ids of all songs with that tag, separated by spaces. Data will be in alphabetical order by tag. 
+ - Data sorted by `tag` will list the tag, followed by `:`, followed by a space, followed by the track_ids of all songs with that tag, separated by spaces. Data will be in alphabetical order by tag. Example:
 
   ```
   Best of Bon Jovi: TRAUYZG12903CDA4E9 TRAZJOI12903CDA550 TRBAAOT128F4261A18 
