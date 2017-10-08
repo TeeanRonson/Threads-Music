@@ -3,12 +3,26 @@ package songfinder;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+/** 
+ * Declares private data members 
+ * @author Rong
+ *
+ */
 public class SingleSongInfo {
 	private String artist; 
 	private String title; 
 	private String trackId;
 	private ArrayList<String> tagList;
 	 
+	
+	/**
+	 * Constructor that takes in four inputs: 
+	 * 3 String objects and a ArrayList<String> object
+	 * @param artist
+	 * @param title
+	 * @param trackId
+	 * @param tagList
+	 */
 	public SingleSongInfo(String artist, String title, String trackId, ArrayList<String> tagList) {
 		this.artist = artist; 
 		this.title = title;

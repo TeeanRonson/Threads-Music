@@ -14,17 +14,36 @@ import java.util.TreeSet;
 
 import java.util.Collections;
 
+/**
+ * Constructor declaring private data members
+ * byArtist as a ArrayList that is sorted by the artist 
+ * byTitle as a ArrayList that is sorted by the title
+ * byTag as a TreeMap to that stores tags as keys, and track id's as values 
+ * @author Rong
+ *
+ */
 public class MyLibrary {
 	private ArrayList<SingleSongInfo> byArtist;	
 	private ArrayList <SingleSongInfo> byTitle;
 	private TreeMap<String, ArrayList<String>> byTag;
 	
+	/**
+	 * Constructor takes no inputs
+	 * Initialises private data members
+	 */
 	public MyLibrary() {
 		this.byArtist = new ArrayList<SingleSongInfo>();
 		this.byTitle = new ArrayList<SingleSongInfo>();
 		this.byTag = new TreeMap<String, ArrayList<String>>();
 	}
 	
+	/**
+	 * Public method takes as input a SingleSongInfo object 
+	 * and adds the object to the ByArtist, ByTitle and ByTag 
+	 * data structures by calling the respective private 
+	 * methods
+	 * @param object
+	 */
 	public void addNewSong(SingleSongInfo object) { 
 		addByArtist(object);
 		addByTitle(object);
@@ -34,6 +53,11 @@ public class MyLibrary {
 		
 	}	
 	
+	/**
+	 * Private method takes as input a SingleSongInfo object
+	 * adds the object to the data structure and sorts by Artist
+	 * @param object
+	 */
 	private void addByArtist(SingleSongInfo object) {
 		
 		this.byArtist.add(object);
@@ -58,9 +82,14 @@ public class MyLibrary {
 		});
 	}
 	
+	/**
+	 * Private method takes as input a SingleSongInfo object
+	 * adds the object to the data structure and sorts by Title
+	 * @param object
+	 */
 	private void addByTitle(SingleSongInfo object) {
 		
-//		this.byTitle.add(object);
+		this.byTitle.add(object);
 	
 		Collections.sort(this.byTitle, new Comparator<SingleSongInfo>() {
 			
@@ -82,8 +111,18 @@ public class MyLibrary {
 		});
 	}	
 	
-		// Add to TreeMap that will have the tags as keys and trackid's as values
-		
+	/**
+	 * Private method takes as input a SingleSongInfo object
+	 * adds the object to the data structure.
+	 * Uses a TreeMap so it automatically sorts the key values
+	 * (tags)
+	 * 
+	 * If the tag already exists, it adds the trackId to the existing
+	 * key. 
+	 * If the tag doesn't exist, it creates a new ArrayList, uses the tag
+	 * as a new key, and places the ArrayList as the value. 
+	 * @param object
+	 */	
 	private void addByTag(SingleSongInfo object) {
 		
 		ArrayList<String> listOfTags = object.getTagList();
@@ -104,6 +143,16 @@ public class MyLibrary {
 		
 	}
 	
+	/**
+	 * Public method takes as input the output directory
+	 * and the order variable which considers how we would 
+	 * like the song data to be sorted. 
+	 * 
+	 * Prints to file according to expected requirements
+	 * @param output
+	 * @param order
+	 * @return
+	 */
 	public boolean artistAndTitleOutput(String output, String order) {
 	
 		Path outPath = Paths.get(output);
@@ -127,8 +176,8 @@ public class MyLibrary {
 				for (int i = 0; i < printer.size(); i++) {
 					out.write(printer.get(i).getArtist() + " - " + printer.get(i).getTitle() + "\n");
 				}
-			} else {
 				
+			} else {
 				Set<String> tags = byTag.keySet();
 				for (String x: tags) {
 					out.write(x + ": ");

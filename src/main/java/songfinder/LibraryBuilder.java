@@ -18,13 +18,28 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class LibraryBuilder {
+	
+	/**
+	 * Declares a private data member
+	 */
 	private MyLibrary addToLibrary;
 
-	
+	/**
+	 * Constructor takes no input and initialises
+	 * the private data member
+	 */
 	public LibraryBuilder() {
 		this.addToLibrary = new MyLibrary();
 	}
 	
+	/**
+	 * Public method takes as input the input directory. 
+	 * Converts the directory into a Path object and 
+	 * walks the file path to extract all files in 
+	 * all sub-folders
+	 * @param directory
+	 * @return
+	 */
 	public MyLibrary buildLibrary(String directory) {
 		
 		MyLibrary ml = new MyLibrary();
@@ -46,6 +61,19 @@ public class LibraryBuilder {
 		return ml;
 	}
 
+	
+	/**
+	 * Public method takes as input a path object. 
+	 * Processes only .json files
+	 * Reads in data from the json files and returns 
+	 * a SingleSongInfo object with the extracted 
+	 * information. 
+	 * 
+	 * Adds the valid SingleSongInfo object to 
+	 * MyLibrary class
+	 * @param p
+	 * @return
+	 */
 	public SingleSongInfo processPath(Path p) {
 		
 		SingleSongInfo ssi = null;
@@ -74,7 +102,7 @@ public class LibraryBuilder {
 				
 				ssi = new SingleSongInfo(artist, title, trackId, tagList);
 				
-//				System.out.println(ssi);
+				System.out.println(ssi);
 				if (ssi != null) {
 					this.addToLibrary.addNewSong(ssi);
 	
