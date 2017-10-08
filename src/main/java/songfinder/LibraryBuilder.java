@@ -18,12 +18,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class LibraryBuilder {
+	private MyLibrary addToLibrary;
 
 	
-	public LibraryBuilder() { 
-		
+	public LibraryBuilder() {
+		this.addToLibrary = new MyLibrary();
 	}
-	//"/Users/Rong/git/lab-3-TeeanRonson/SongFinder/input"
 	
 	public MyLibrary buildLibrary(String directory) {
 		
@@ -36,12 +36,11 @@ public class LibraryBuilder {
 			
 			//use aggregate operation forEach to process each file 
 			paths.forEach(p -> processPath(p));
-			 
+			// if process is successful then add to MyLibrary
+			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
-//		this.processDirectoryFiles(ml, path);
 		
 		
 		return ml;
@@ -49,19 +48,12 @@ public class LibraryBuilder {
 
 	public SingleSongInfo processPath(Path p) {
 		
-		// if p is a directory we need to do something about it 
-//		System.out.println(currentFile.getAbsolutePath());
-		
-//		System.out.println(p.getFileName());
 		SingleSongInfo ssi = null;
-		JsonElement sample;
-		String tags = "";
+		ArrayList<String> tagList = new ArrayList<String>();
 	
 		if (p.toString().toLowerCase().endsWith(".json")) {
-//			System.out.println(p);
 		
 			Gson gson = new Gson();
-//			try (FileReader fr = new FileReader(currentFile.getAbsolutePath())) {
 			try (FileReader fr = new FileReader(p.toFile().getAbsolutePath())) {
 				
 				JsonParser parser = new JsonParser();
@@ -71,30 +63,27 @@ public class LibraryBuilder {
 				String artist = obj.get("artist").getAsString();
 				String title = obj.get("title").getAsString();
 				String trackId = obj.get("track_id").getAsString();
+				String tags = "";
 				
 				JsonArray getTags = obj.getAsJsonArray("tags");
-//				System.out.println(getTags.size());
 				for (int i = 0; i < getTags.size(); i++) {
 					JsonArray internalArray = (JsonArray) getTags.get(i);
-					System.out.println(internalArray.size());
 					tags = internalArray.get(0).getAsString();
-//					addTag(tags)		
-				}
+					tagList.add(tags);
+				}		
 				
-//				System.out.println(getTags);
-//				if (getTags.isJsonArray()) {
-					
-							
-				}
+				ssi = new SingleSongInfo(artist, title, trackId, tagList);
 				
-				ssi = new SingleSongInfo(artist, title, trackId, tags);
-			
+//				System.out.println(ssi);
+				if (ssi != null) {
+					this.addToLibrary.addNewSong(ssi);
+	
+				}
 			} catch (IOException e) {
 				e.getMessage();
 				System.out.println("can't find file");
 			}
-//		}
+		}
 		return ssi;
-	
 	}
 }

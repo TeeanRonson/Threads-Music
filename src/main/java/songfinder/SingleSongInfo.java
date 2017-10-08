@@ -1,16 +1,19 @@
 package songfinder;
 
+import java.util.ArrayList;
+import java.util.TreeSet;
+
 public class SingleSongInfo {
 	private String artist; 
 	private String title; 
 	private String trackId;
-	private String tags;
+	private ArrayList<String> tagList;
 	 
-	public SingleSongInfo(String artist, String title, String trackId, String tags) {
+	public SingleSongInfo(String artist, String title, String trackId, ArrayList<String> tagList) {
 		this.artist = artist; 
 		this.title = title;
 		this.trackId = trackId;
-		this.tags = tags;
+		this.tagList = tagList;
 		
 	}
 
@@ -26,12 +29,12 @@ public class SingleSongInfo {
 		return this.trackId;
 	}
 	
-	public String getTag() {
-		return this.tags;
+	public ArrayList<String> getTagList() {
+		return this.tagList;
 	}
 	
 	public String toString() {
-		return null;
+		return "Artist: " + this.artist + " \nTitle: " + this.title + " \nTrackId: " + this.trackId + " ";
 	}
 	
 	

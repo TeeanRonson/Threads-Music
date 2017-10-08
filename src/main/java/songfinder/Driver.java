@@ -26,7 +26,6 @@ public class Driver {
 			MyLibrary ml = new MyLibrary();
 			LibraryBuilder lb = new LibraryBuilder();
 			
-			
 			for (int i = 0; i < args.length; i += 2) {
 				checker.put(args[i], args[i + 1]);
 			}
@@ -34,12 +33,15 @@ public class Driver {
 			if (checker.containsKey(input) && checker.containsKey(output) && checker.containsKey(order)) {
 					
 				ml = lb.buildLibrary(checker.get(input));
-				lb.buildLibrary(checker.get(output));
+				
+				ml.artistAndTitleOutput(checker.get(output), checker.get(order));
+				ml.artistAndTitleOutput("/Users/Rong/git/lab-3-TeeanRonson/testOutput/output1", checker.get(order));
+				System.out.println("Driver result: " + ml.checkSize());
 			}
 
 		} else { 
 			System.out.println("Unable to processs arguments");
-			System.exit(0);
+			System.exit(1);
 		}	
 	}
 
