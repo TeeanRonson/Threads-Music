@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.TreeSet;
 import java.util.stream.Stream;
 
 import com.google.gson.Gson;
@@ -23,7 +24,7 @@ public class LibraryBuilder {
 	 * Declares a private data member
 	 */
 	private MyLibrary addToLibrary;
-
+	
 	/**
 	 * Constructor takes no input and initialises
 	 * the private data member
@@ -42,26 +43,18 @@ public class LibraryBuilder {
 	 */
 	public MyLibrary buildLibrary(String directory) {
 		
-		MyLibrary ml = new MyLibrary();
-		
-		// converts the path String into a Path object
 		Path path = Paths.get(directory);
 		
 		try (Stream<Path> paths = Files.walk(path)) {
 			
-			//use aggregate operation forEach to process each file 
 			paths.forEach(p -> processPath(p));
-			// if process is successful then add to MyLibrary
 			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
-		
-		
-		return ml;
+		return this.addToLibrary;
 	}
 
-	
 	/**
 	 * Public method takes as input a path object. 
 	 * Processes only .json files
@@ -71,17 +64,21 @@ public class LibraryBuilder {
 	 * 
 	 * Adds the valid SingleSongInfo object to 
 	 * MyLibrary class
+	 * 
+	 * Used sources: 
+	 * https://stackoverflow.com/questions/24179163/parse-json-of-two-dimensional-array-in-java
+	 * https://stackoverflow.com/questions/18544133/parsing-json-array-into-java-util-list-with-gson
 	 * @param p
 	 * @return
 	 */
 	public SingleSongInfo processPath(Path p) {
 		
 		SingleSongInfo ssi = null;
-		ArrayList<String> tagList = new ArrayList<String>();
+		TreeSet<String> tagList = new TreeSet<String>();
 	
 		if (p.toString().toLowerCase().endsWith(".json")) {
-		
 			Gson gson = new Gson();
+			
 			try (FileReader fr = new FileReader(p.toFile().getAbsolutePath())) {
 				
 				JsonParser parser = new JsonParser();
@@ -91,9 +88,9 @@ public class LibraryBuilder {
 				String artist = obj.get("artist").getAsString();
 				String title = obj.get("title").getAsString();
 				String trackId = obj.get("track_id").getAsString();
+				JsonArray getTags = obj.getAsJsonArray("tags");
 				String tags = "";
 				
-				JsonArray getTags = obj.getAsJsonArray("tags");
 				for (int i = 0; i < getTags.size(); i++) {
 					JsonArray internalArray = (JsonArray) getTags.get(i);
 					tags = internalArray.get(0).getAsString();
@@ -101,12 +98,11 @@ public class LibraryBuilder {
 				}		
 				
 				ssi = new SingleSongInfo(artist, title, trackId, tagList);
-				
-				System.out.println(ssi);
+			
 				if (ssi != null) {
 					this.addToLibrary.addNewSong(ssi);
-	
 				}
+				
 			} catch (IOException e) {
 				e.getMessage();
 				System.out.println("can't find file");

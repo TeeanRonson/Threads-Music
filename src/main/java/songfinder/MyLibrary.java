@@ -20,12 +20,11 @@ import java.util.Collections;
  * byTitle as a ArrayList that is sorted by the title
  * byTag as a TreeMap to that stores tags as keys, and track id's as values 
  * @author Rong
- *
  */
 public class MyLibrary {
 	private ArrayList<SingleSongInfo> byArtist;	
 	private ArrayList <SingleSongInfo> byTitle;
-	private TreeMap<String, ArrayList<String>> byTag;
+	private TreeMap<String, TreeSet<String>> byTag;
 	
 	/**
 	 * Constructor takes no inputs
@@ -34,7 +33,7 @@ public class MyLibrary {
 	public MyLibrary() {
 		this.byArtist = new ArrayList<SingleSongInfo>();
 		this.byTitle = new ArrayList<SingleSongInfo>();
-		this.byTag = new TreeMap<String, ArrayList<String>>();
+		this.byTag = new TreeMap<String, TreeSet<String>>();
 	}
 	
 	/**
@@ -48,9 +47,6 @@ public class MyLibrary {
 		addByArtist(object);
 		addByTitle(object);
 		addByTag(object);
-		
-		System.out.println(byArtist.get(0).getArtist());
-		
 	}	
 	
 	/**
@@ -125,17 +121,17 @@ public class MyLibrary {
 	 */	
 	private void addByTag(SingleSongInfo object) {
 		
-		ArrayList<String> listOfTags = object.getTagList();
+		TreeSet<String> listOfTags = object.getTagList();
 		for (String x: listOfTags) {
 			if (x != null) {
 				if (!this.byTag.containsKey(x)) {
-					ArrayList<String> ids = new ArrayList<String>();
+					TreeSet<String> ids = new TreeSet<String>();
 					ids.add(object.getTrackId());
 					this.byTag.put(x, ids);
 				
 				} else {
 			
-					ArrayList<String> ids = this.byTag.get(x);
+					TreeSet<String> ids = this.byTag.get(x);
 					ids.add(object.getTrackId());
 				}
 			}	
@@ -178,6 +174,7 @@ public class MyLibrary {
 				}
 				
 			} else {
+				
 				Set<String> tags = byTag.keySet();
 				for (String x: tags) {
 					out.write(x + ": ");
@@ -200,5 +197,4 @@ public class MyLibrary {
 	public int checkSize() {
 		return this.byArtist.size(); 
 	}
-
 }

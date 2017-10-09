@@ -12,9 +12,8 @@ public class SingleSongInfo {
 	private String artist; 
 	private String title; 
 	private String trackId;
-	private ArrayList<String> tagList;
+	private TreeSet<String> tagList;
 	 
-	
 	/**
 	 * Constructor that takes in four inputs: 
 	 * 3 String objects and a ArrayList<String> object
@@ -23,12 +22,11 @@ public class SingleSongInfo {
 	 * @param trackId
 	 * @param tagList
 	 */
-	public SingleSongInfo(String artist, String title, String trackId, ArrayList<String> tagList) {
+	public SingleSongInfo(String artist, String title, String trackId, TreeSet<String> tagList) {
 		this.artist = artist; 
 		this.title = title;
 		this.trackId = trackId;
 		this.tagList = tagList;
-		
 	}
 
 	public String getArtist() {
@@ -43,18 +41,13 @@ public class SingleSongInfo {
 		return this.trackId;
 	}
 	
-	public ArrayList<String> getTagList() {
+	public TreeSet<String> getTagList() {
 		return this.tagList;
 	}
 	
 	public String toString() {
 		return "Artist: " + this.artist + " \nTitle: " + this.title + " \nTrackId: " + this.trackId + " ";
 	}
-	
-	
-
-
-
 }
 
 
