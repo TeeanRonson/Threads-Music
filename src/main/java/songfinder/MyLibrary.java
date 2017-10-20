@@ -22,6 +22,11 @@ import java.util.Collections;
  * @author Rong
  */
 public class MyLibrary {
+	
+//TODO: nice design overall. I do recommend that you use Maps instead of List data structures.
+//This will make it easier to access data in later projects.
+//I also recommend you use a sorted Map so that you do not have to do a sort each time.
+//The sorted data structure will insert in O(log n) whereas a full sort is an nlogn operation.	
 	private ArrayList<SingleSongInfo> byArtist;	
 	private ArrayList <SingleSongInfo> byTitle;
 	private TreeMap<String, TreeSet<String>> byTag;
