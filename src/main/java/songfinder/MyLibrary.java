@@ -16,8 +16,8 @@ import java.util.Collections;
 
 /**
  * Constructor declaring private data members
- * byArtist as a ArrayList that is sorted by the artist 
- * byTitle as a ArrayList that is sorted by the title
+ * byArtist as a TreeMap that stores artist's as keys and SingleSongInfo object as values
+ * byTitle as a TreeMap that stores title's as keys and SingleSongInfo object as values
  * byTag as a TreeMap to that stores tags as keys, and track id's as values 
  * @author Rong
  */
@@ -27,89 +27,90 @@ public class MyLibrary {
 //This will make it easier to access data in later projects.
 //I also recommend you use a sorted Map so that you do not have to do a sort each time.
 //The sorted data structure will insert in O(log n) whereas a full sort is an nlogn operation.	
-	private ArrayList<SingleSongInfo> byArtist;	
-	private ArrayList <SingleSongInfo> byTitle;
+	private TreeMap<String, TreeSet<SingleSongInfo>> byArtist;	
+	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
 	private TreeMap<String, TreeSet<String>> byTag;
+	private TreeMap<String, String> findTitle;
 	
 	/**
 	 * Constructor takes no inputs
 	 * Initialises private data members
 	 */
 	public MyLibrary() {
-		this.byArtist = new ArrayList<SingleSongInfo>();
-		this.byTitle = new ArrayList<SingleSongInfo>();
+		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
+		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTag = new TreeMap<String, TreeSet<String>>();
+		this.findTitle = new TreeMap<String, String>();
 	}
 	
 	/**
 	 * Public method takes as input a SingleSongInfo object 
-	 * and adds the object to the ByArtist, ByTitle and ByTag 
-	 * data structures by calling the respective private 
-	 * methods
+	 * and adds the object to the ByArtist, ByTitle, ByTag  
+	 * and findTitle data structures by calling the 
+	 * respective private methods
 	 * @param object
 	 */
 	public void addNewSong(SingleSongInfo object) { 
 		addByArtist(object);
 		addByTitle(object);
 		addByTag(object);
-	}	
-	
-	/**
-	 * Private method takes as input a SingleSongInfo object
-	 * adds the object to the data structure and sorts by Artist
-	 * @param object
-	 */
-	private void addByArtist(SingleSongInfo object) {
-		
-		this.byArtist.add(object);
-		
-		Collections.sort(this.byArtist, new Comparator<SingleSongInfo>() {
-
-			@Override
-			public int compare(SingleSongInfo o1, SingleSongInfo o2) {
-				
-				int result0 = o1.getArtist().compareTo(o2.getArtist());
-				int result1 = o1.getTitle().compareTo(o2.getTitle());
-				
-				if (result0 == 0 && result1 == 0) {
-					return o1.getTrackId().compareTo(o2.getTrackId());
-				} 
-				else if (result0 == 0) {
-					return result1;
-				} else {
-					return result0;
-				}
-			}	
-		});
+		findTitle(object);
 	}
 	
 	/**
 	 * Private method takes as input a SingleSongInfo object
-	 * adds the object to the data structure and sorts by Title
+	 * adds the object to the TreeMap data structure and sorts
+	 * by track id's
+	 * @param object
+	 */
+	private void findTitle(SingleSongInfo object) {
+		
+		if (!this.findTitle.containsKey(object.getTrackId())) {
+			this.findTitle.put(object.getTrackId(), object.getTitle());
+		}
+	}
+	
+	/**
+	 * Private method takes as input a SingleSongInfo object. 
+	 * Takes artist as key and SingleSongInfo object as values
+	 * if the key already exists, it adds the object to the existing TreeSet 
+	 * if the key doesn't exist, it adds the object to a newly created TreeSet
+	 * @param object
+	 */
+	private void addByArtist(SingleSongInfo object) {
+		
+		ByArtistSorter bas = new ByArtistSorter();
+		if (!this.byArtist.containsKey(object.getArtist())) {
+			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(bas);
+			list.add(object);
+			this.byArtist.put(object.getArtist(), list);
+			
+		} else { 
+			
+			TreeSet<SingleSongInfo> list = this.byArtist.get(object.getArtist());
+			list.add(object);
+		}
+	}
+	
+	/**
+	 * Private method takes as input a SingleSongInfo object. 
+	 * Takes title as key and SingleSongInfo object as values
+	 * if the key already exists, it adds the object to the existing TreeSet 
+	 * if the key doesn't exist, it adds the object to a newly created TreeSet
 	 * @param object
 	 */
 	private void addByTitle(SingleSongInfo object) {
-		
-		this.byTitle.add(object);
-	
-		Collections.sort(this.byTitle, new Comparator<SingleSongInfo>() {
+		ByTitleSorter bts = new ByTitleSorter();
+		if (!this.byTitle.containsKey(object.getTitle())) {
+			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(bts);
+			list.add(object);
+			this.byTitle.put(object.getTitle(), list);
 			
-			@Override
-			public int compare(SingleSongInfo o1, SingleSongInfo o2) {
-					
-				int result0 = o1.getTitle().compareTo(o2.getTitle());
-				int result1 = o1.getArtist().compareTo(o2.getArtist());
-					
-				if (result0 == 0 && result1 == 0) { 
-					return o1.getTrackId().compareTo(o2.getTrackId()); 
-				} 
-				else if (result0 == 0) {
-					return result1;
-				} else {
-					return result0;
-				}
-			}	
-		});
+		} else { 
+			
+			TreeSet<SingleSongInfo> list = this.byTitle.get(object.getTitle());
+			list.add(object);
+		}
 	}	
 	
 	/**
@@ -141,13 +142,12 @@ public class MyLibrary {
 				}
 			}	
 		}
-		
 	}
 	
 	/**
 	 * Public method takes as input the output directory
-	 * and the order variable which considers how we would 
-	 * like the song data to be sorted. 
+	 * and the 'order' variable which considers how the user
+	 *  would like the song data to be sorted. 
 	 * 
 	 * Prints to file according to expected requirements
 	 * @param output
@@ -163,9 +163,9 @@ public class MyLibrary {
 		String title = "title";
 		String tag = "tag";
 		boolean successful = false;
-		ArrayList<SingleSongInfo> printer = new ArrayList<SingleSongInfo>();
+		TreeMap<String, TreeSet<SingleSongInfo>> printer = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		
-		try(BufferedWriter out = Files.newBufferedWriter(outPath)) {
+		try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
 
 			if (order.equals(artist)) {
 				printer = this.byArtist;
@@ -173,9 +173,16 @@ public class MyLibrary {
 				printer = this.byTitle;
 			}	
 			
+			// byArtist and byTitle is already sorted accordingly. 
+			// Loop through the key set which is in ascending order
+			// List out data in the format "Artist - Title" using the SingleSongInfo object's methods
 			if (!order.equals(tag)) {
-				for (int i = 0; i < printer.size(); i++) {
-					out.write(printer.get(i).getArtist() + " - " + printer.get(i).getTitle() + "\n");
+				Set<String> listOut = printer.keySet();
+				for (String x: listOut) {
+					TreeSet<SingleSongInfo> list = printer.get(x);
+					for (SingleSongInfo y: list) {
+						out.write(y.getArtist() + " - " + y.getTitle() + "\n");
+					}
 				}
 				
 			} else {

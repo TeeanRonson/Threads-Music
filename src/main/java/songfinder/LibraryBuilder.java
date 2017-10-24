@@ -58,7 +58,7 @@ public class LibraryBuilder {
 	/**
 	 * Public method takes as input a path object. 
 	 * Processes only .json files
-	 * Reads in data from the json files and returns 
+	 * Reads in data from the .json files and returns 
 	 * a SingleSongInfo object with the extracted 
 	 * information. 
 	 * 

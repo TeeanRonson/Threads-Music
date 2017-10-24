@@ -6,7 +6,6 @@ import java.util.TreeSet;
 /** 
  * Declares private data members 
  * @author Rong
- *
  */
 public class SingleSongInfo {
 	private String artist; 
@@ -49,6 +48,3 @@ public class SingleSongInfo {
 		return "Artist: " + this.artist + " \nTitle: " + this.title + " \nTrackId: " + this.trackId + " ";
 	}
 }
-
-
-
