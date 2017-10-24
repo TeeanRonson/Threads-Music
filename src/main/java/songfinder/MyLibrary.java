@@ -30,7 +30,7 @@ public class MyLibrary {
 	private TreeMap<String, TreeSet<SingleSongInfo>> byArtist;	
 	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
 	private TreeMap<String, TreeSet<String>> byTag;
-	private TreeMap<String, String> findTitle;
+	private TreeMap<String, SingleSongInfo> findTitle;
 	
 	/**
 	 * Constructor takes no inputs
@@ -40,7 +40,7 @@ public class MyLibrary {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTag = new TreeMap<String, TreeSet<String>>();
-		this.findTitle = new TreeMap<String, String>();
+		this.findTitle = new TreeMap<String, SingleSongInfo>();
 	}
 	
 	/**
@@ -66,7 +66,7 @@ public class MyLibrary {
 	private void findTitle(SingleSongInfo object) {
 		
 		if (!this.findTitle.containsKey(object.getTrackId())) {
-			this.findTitle.put(object.getTrackId(), object.getTitle());
+			this.findTitle.put(object.getTrackId(), object);
 		}
 	}
 	
