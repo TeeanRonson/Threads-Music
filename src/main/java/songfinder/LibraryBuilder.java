@@ -40,18 +40,27 @@ public class LibraryBuilder {
 	 * all sub-folders
 	 * @param directory
 	 * @return
+	 * @throws InterruptedException 
 	 */
-	public MyLibrary buildLibrary(String directory) {
+	public MyLibrary buildLibrary(String directory, int threadsSize) {
 		
 		Path path = Paths.get(directory);
+		WorkQueue wq = new WorkQueue(threadsSize); 
 		
 		try (Stream<Path> paths = Files.walk(path)) {
 			
-			paths.forEach(p -> processPath(p));
+			paths.forEach(p -> wq.execute(new Worker(this.addToLibrary, p)));
+			
+			// check exception?
 			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
+		
+		
+		wq.shutDown();
+		wq.awaitTermination();
+		
 		return this.addToLibrary;
 	}
 
@@ -71,43 +80,43 @@ public class LibraryBuilder {
 	 * @param p
 	 * @return
 	 */
-	public SingleSongInfo processPath(Path p) {
+//	public SingleSongInfo processPath(Path p) {
 		
-		SingleSongInfo ssi = null;
-		TreeSet<String> tagList = new TreeSet<String>();
-	
-		if (p.toString().toLowerCase().endsWith(".json")) {
-			Gson gson = new Gson();
-			
-			try (FileReader fr = new FileReader(p.toFile().getAbsolutePath())) {
-				
-				JsonParser parser = new JsonParser();
-				JsonElement element = parser.parse(fr);
-				JsonObject obj = element.getAsJsonObject();
-			
-				String artist = obj.get("artist").getAsString();
-				String title = obj.get("title").getAsString();
-				String trackId = obj.get("track_id").getAsString();
-				JsonArray getTags = obj.getAsJsonArray("tags");
-				String tags = "";
-				
-				for (int i = 0; i < getTags.size(); i++) {
-					JsonArray internalArray = (JsonArray) getTags.get(i);
-					tags = internalArray.get(0).getAsString();
-					tagList.add(tags);
-				}		
-				
-				ssi = new SingleSongInfo(artist, title, trackId, tagList);
-			
-				if (ssi != null) {
-					this.addToLibrary.addNewSong(ssi);
-				}
-				
-			} catch (IOException e) {
-				e.getMessage();
-				System.out.println("can't find file");
-			}
-		}
-		return ssi;
-	}
+//		SingleSongInfo ssi = null;
+//		TreeSet<String> tagList = new TreeSet<String>();
+//	
+//		if (p.toString().toLowerCase().endsWith(".json")) {
+//			Gson gson = new Gson();
+//			
+//			try (FileReader fr = new FileReader(p.toFile().getAbsolutePath())) {
+//				
+//				JsonParser parser = new JsonParser();
+//				JsonElement element = parser.parse(fr);
+//				JsonObject obj = element.getAsJsonObject();
+//			
+//				String artist = obj.get("artist").getAsString();
+//				String title = obj.get("title").getAsString();
+//				String trackId = obj.get("track_id").getAsString();
+//				JsonArray getTags = obj.getAsJsonArray("tags");
+//				String tags = "";
+//				
+//				for (int i = 0; i < getTags.size(); i++) {
+//					JsonArray internalArray = (JsonArray) getTags.get(i);
+//					tags = internalArray.get(0).getAsString();
+//					tagList.add(tags);
+//				}		
+//				
+//				ssi = new SingleSongInfo(artist, title, trackId, tagList);
+//			
+//				if (ssi != null) {
+//					this.addToLibrary.addNewSong(ssi);
+//				}
+//				
+//			} catch (IOException e) {
+//				e.getMessage();
+//				System.out.println("can't find file");
+//			}
+//		}
+//		return ssi;
+//	}
 }
