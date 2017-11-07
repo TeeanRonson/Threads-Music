@@ -49,9 +49,7 @@ public class LibraryBuilder {
 		
 		try (Stream<Path> paths = Files.walk(path)) {
 			
-			paths.forEach(p -> wq.execute(new Worker(this.addToLibrary, p)));
-			
-			// check exception?
+			paths.forEach(p -> wq.execute(new Worker(this.addToLibrary, p))); 
 			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());

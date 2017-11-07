@@ -26,6 +26,7 @@ public class MyLibrary {
 	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
 	private TreeMap<String, TreeSet<String>> byTag;
 	private TreeMap<String, SingleSongInfo> findTitle;
+	private ReentrantLock rwl;
 	
 	/**
 	 * Constructor takes no inputs
@@ -36,6 +37,7 @@ public class MyLibrary {
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTag = new TreeMap<String, TreeSet<String>>();
 		this.findTitle = new TreeMap<String, SingleSongInfo>();
+		rwl = new ReentrantLock();
 	}
 	
 	/**
@@ -45,11 +47,13 @@ public class MyLibrary {
 	 * respective private methods
 	 * @param object
 	 */
-	public synchronized void addNewSong(SingleSongInfo object) { 
+	public void addNewSong(SingleSongInfo object) {
+		this.rwl.lockWrite();
 		addByArtist(object);
 		addByTitle(object);
 		addByTag(object);
 		findTitle(object);
+		this.rwl.unlockWrite();
 	}
 	
 	/**
@@ -58,7 +62,7 @@ public class MyLibrary {
 	 * by track id's
 	 * @param object
 	 */
-	private synchronized void findTitle(SingleSongInfo object) {
+	private void findTitle(SingleSongInfo object) {
 		
 		if (!this.findTitle.containsKey(object.getTrackId())) {
 			this.findTitle.put(object.getTrackId(), object);
@@ -72,7 +76,7 @@ public class MyLibrary {
 	 * if the key doesn't exist, it adds the object to a newly created TreeSet
 	 * @param object
 	 */
-	private synchronized void addByArtist(SingleSongInfo object) {
+	private void addByArtist(SingleSongInfo object) {
 		
 		ByArtistSorter bas = new ByArtistSorter();
 		if (!this.byArtist.containsKey(object.getArtist())) {
@@ -94,7 +98,8 @@ public class MyLibrary {
 	 * if the key doesn't exist, it adds the object to a newly created TreeSet
 	 * @param object
 	 */
-	private synchronized void addByTitle(SingleSongInfo object) {
+	private void addByTitle(SingleSongInfo object) {
+
 		ByTitleSorter bts = new ByTitleSorter();
 		if (!this.byTitle.containsKey(object.getTitle())) {
 			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(bts);
@@ -120,7 +125,7 @@ public class MyLibrary {
 	 * as a new key, and places the ArrayList as the value. 
 	 * @param object
 	 */	
-	private synchronized void addByTag(SingleSongInfo object) {
+	private void addByTag(SingleSongInfo object) {
 		
 		TreeSet<String> listOfTags = object.getTagList();
 		for (String x: listOfTags) {
@@ -149,7 +154,7 @@ public class MyLibrary {
 	 * @param order
 	 * @return
 	 */
-	public synchronized boolean artistAndTitleOutput(String output, String order) {
+	public boolean artistAndTitleOutput(String output, String order) {
 	
 		Path outPath = Paths.get(output);
 		outPath.getParent().toFile().mkdirs();
@@ -160,42 +165,48 @@ public class MyLibrary {
 		boolean successful = false;
 		TreeMap<String, TreeSet<SingleSongInfo>> printer = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		
-		try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
-
-			if (order.equals(artist)) {
-				printer = this.byArtist;
-			} else if (order.equals(title)){ 
-				printer = this.byTitle;
-			}	
-
-			if (!order.equals(tag)) {
-				Set<String> listOut = printer.keySet();
-				for (String x: listOut) {
-					TreeSet<SingleSongInfo> list = printer.get(x);
-					for (SingleSongInfo y: list) {
-						out.write(y.getArtist() + " - " + y.getTitle() + "\n");
-					}
-				}
-				
-			} else {
-				
-				Set<String> tags = byTag.keySet();
-				for (String x: tags) {
-					out.write(x + ": ");
-					for(String id: byTag.get(x)) {
-						out.write(id + " ");
-					}
-					out.write("\n");
-				}
-			}
-			successful = true;
+		try {
 			
-		} catch (IOException e) {
-			e.getMessage();
-			System.out.println(e);		
+			this.rwl.lockRead();
+		
+			try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
+
+				if (order.equals(artist)) {
+					printer = this.byArtist;
+				} else if (order.equals(title)){ 
+					printer = this.byTitle;
+				}	
+
+				if (!order.equals(tag)) {
+					Set<String> listOut = printer.keySet();
+					for (String x: listOut) {
+						TreeSet<SingleSongInfo> list = printer.get(x);
+						for (SingleSongInfo y: list) {
+							out.write(y.getArtist() + " - " + y.getTitle() + "\n");
+						}
+					}
+				
+				} else {
+				
+					Set<String> tags = byTag.keySet();
+					for (String x: tags) {
+						out.write(x + ": ");
+						for(String id: byTag.get(x)) {
+							out.write(id + " ");
+						}
+						out.write("\n");
+					}
+				}
+				successful = true;
+			
+			} catch (IOException e) {
+				e.getMessage();
+				System.out.println(e);		
+				return successful;
+			}
 			return successful;
+		} finally {
+			this.rwl.unlockRead();
 		}
-		return successful;
 	}
-	
 }

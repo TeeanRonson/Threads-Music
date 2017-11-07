@@ -15,7 +15,7 @@ public class DriverSongFinder {
 	 */
 	public static void main(String[] args) {
 		
-		if (args.length != 8 && args.length == 0) {
+		if (args.length != 6 && args.length != 8) {
 			System.out.println("Unable to processs arguments");
 		}	
 			
@@ -26,21 +26,32 @@ public class DriverSongFinder {
 		String threads = "-threads";
 		MyLibrary ml = new MyLibrary();
 		LibraryBuilder lb = new LibraryBuilder();
-			
+		
 		for (int i = 0; i < args.length; i += 2) {
 			checker.put(args[i], args[i + 1]);
 		}
+	
+		if (!checker.containsKey(input) || !checker.containsKey(output) || !checker.containsKey(order)) {
 			
-		if (checker.containsKey(input) && checker.containsKey(output) && checker.containsKey(order) && checker.containsKey(threads)) {	
-			if (checker.get(threads).isEmpty() || Integer.valueOf(checker.get(threads)) < 1 || Integer.valueOf(checker.get(threads)) > 1000) {
-				checker.put(threads, "10");
-			}
-			// needs a check on whether the value of threads key is an integer i.e. not a string etc???
+			System.out.println("Incorrect arguments");
+			
+		} else {
+			
+			try {
+				
+				if (!checker.containsKey(threads) || checker.get(threads).isEmpty() || Integer.valueOf(checker.get(threads)) < 1 || Integer.valueOf(checker.get(threads)) > 1000) {
+					checker.put(threads, "10");
+				}
+				
 				ml = lb.buildLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
 				ml.artistAndTitleOutput(checker.get(output), checker.get(order));
+				
+				
+			} catch (NumberFormatException e) {
+				e.getLocalizedMessage();
+				System.out.println("Argument value is not an integer");
+			}
 			
-		} else { 
-			System.out.println("Incorrect arguments");
 		}		
 	}
 }
