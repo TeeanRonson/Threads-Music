@@ -19,7 +19,6 @@ public class Worker implements Runnable {
 	public Worker(MyLibrary library, Path p) {
 		this.library = library;
 		this.p = p;
-		
 	}
 
 	@Override

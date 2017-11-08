@@ -14,7 +14,6 @@ public class WorkQueue {
         this.queue = new LinkedList();    
         this.shutDown = false;
         
-        
         for (int i = 0; i < myThreads; i++) {
             this.threads[i] = new PoolWorker();
             this.threads[i].start();
@@ -27,7 +26,6 @@ public class WorkQueue {
     				queue.addLast(r);
     				queue.notify();
     			}
-    	
     		}
     }
     
@@ -37,22 +35,21 @@ public class WorkQueue {
     }
     
     public void awaitTermination() {
-    	
+    		
     		synchronized (queue) {
     			queue.notifyAll();
     		}	
-    		
-    			for (int i = 0; i < myThreads; i++) {
-    				try {
-    				
-    					this.threads[i].join();
-				
-    				} catch (InterruptedException e) {
-    					e.printStackTrace();
-    				}
+    	
+    		for (int i = 0; i < myThreads; i++) {
+    			
+    			try {
+    				this.threads[i].join();
+			
+    			} catch (InterruptedException e) {
+    				e.printStackTrace();
     			}
+    		}
    }		
-    
     
     private class PoolWorker extends Thread {
     	
@@ -65,7 +62,8 @@ public class WorkQueue {
         				if (shutDown == true && queue.isEmpty()) {
         					break;
         				} 
-        				while(queue.isEmpty()) {
+        				while(queue.isEmpty() && shutDown == false) {
+        					
                         try {
                             queue.wait();
                         }
@@ -74,7 +72,6 @@ public class WorkQueue {
                     }
         				r = (Runnable) queue.removeFirst();
         			}
-        			
         		
         			try {
         				r.run();
@@ -83,7 +80,6 @@ public class WorkQueue {
         				e.getMessage();
         				System.out.println("can't run exception");
         			}
-        		
         		}
        }
     }
