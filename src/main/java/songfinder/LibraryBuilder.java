@@ -19,12 +19,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class LibraryBuilder {
-	
 	/**
 	 * Declares a private data member
 	 */
 	private MyLibrary addToLibrary;
-	
 	/**
 	 * Constructor takes no input and initialises
 	 * the private data member

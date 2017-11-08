@@ -57,7 +57,7 @@ public class Worker implements Runnable {
 				
 			} catch (IOException e) {
 				e.getMessage();
-				System.out.println("can't find file");
+				System.out.println("Can't find file");
 			}
 		}
 	}

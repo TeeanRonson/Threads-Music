@@ -2,7 +2,7 @@ package songfinder;
 
 import java.util.Comparator;
 
-public class ByArtistSorter implements Comparator<SingleSongInfo>{
+public class ByArtistSorter implements Comparator<SingleSongInfo> {
 
 	@Override
 	public int compare(SingleSongInfo o1, SingleSongInfo o2) {

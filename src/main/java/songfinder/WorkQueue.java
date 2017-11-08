@@ -62,7 +62,7 @@ public class WorkQueue {
         				if (shutDown == true && queue.isEmpty()) {
         					break;
         				} 
-        				while(queue.isEmpty() && shutDown == false) {
+        				while(shutDown == false && queue.isEmpty()) {
         					
                         try {
                             queue.wait();
@@ -70,6 +70,7 @@ public class WorkQueue {
                         catch (InterruptedException ignored) {
                         }
                     }
+        				
         				r = (Runnable) queue.removeFirst();
         			}
         		

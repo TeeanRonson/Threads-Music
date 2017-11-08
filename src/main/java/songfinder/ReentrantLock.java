@@ -20,7 +20,6 @@ public class ReentrantLock {
 	 * Construct a new ReentrantLock.
 	 */
 	public ReentrantLock() {
-
 		this.readers = new HashMap<Long, Integer>();
 		this.writers = new HashMap<Long, Integer>();
 	}

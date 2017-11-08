@@ -32,6 +32,7 @@ public class MyLibrary {
 	 * Constructor takes no inputs
 	 * Initialises private data members
 	 */
+	
 	public MyLibrary() {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
@@ -47,6 +48,7 @@ public class MyLibrary {
 	 * respective private methods
 	 * @param object
 	 */
+	
 	public void addNewSong(SingleSongInfo object) {
 		this.rwl.lockWrite();
 		addByArtist(object);

@@ -16,7 +16,8 @@ public class DriverSongFinder {
 	public static void main(String[] args) {
 		
 		if (args.length != 6 && args.length != 8) {
-			System.out.println("Unable to processs arguments");
+			System.out.println("Incorrect arguments length");
+			
 		} else { 
 			
 			HashMap<String, String> checker = new HashMap<String, String>();
