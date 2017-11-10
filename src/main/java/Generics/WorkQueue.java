@@ -1,13 +1,33 @@
-package songfinder;
+package Generics;
 
 import java.util.LinkedList;
 
+/** 
+ * WorkQueue class used for Multi-threading
+ * Declares private data members
+ *  
+ * @author Rong
+ *
+ */
 public class WorkQueue {
 	private final int myThreads;
     private final PoolWorker[] threads;
     private final LinkedList queue;
     private volatile boolean shutDown;
  
+    /**
+     * Constructor takes in one input 
+     * which determines the number of threads 
+     * to be used in building the library 
+     * 
+     * Initialises private data members
+     * 
+     * Creates PoolWorker objects up to an amount
+     * specified by the number of threads passed 
+     * into the constructor 
+     * 
+     * @param myThreads
+     */
     public WorkQueue(int myThreads) {
         this.myThreads = myThreads;
         this.threads = new PoolWorker[myThreads];
@@ -20,6 +40,14 @@ public class WorkQueue {
         }
     }
  
+    /**
+     * Public method that executes the object
+     * implementing the Runnable interface
+     * 
+     * Adds each new object to the work queue 
+     * and notifies threads
+     * @param r
+     */
     public void execute(Runnable r) {
     		if (this.shutDown == false) {
     			synchronized(queue) {
@@ -29,11 +57,21 @@ public class WorkQueue {
     		}
     }
     
+    /** 
+     * Public method that when called
+     * stops accepting new objects into 
+     * the queue 
+     */
     public void shutDown() {
    
     		this.shutDown = true;
     }
     
+    /** 
+     * Public method that blocks 
+     * until all tasks have completed 
+     * execution after a shutdown request
+     */
     public void awaitTermination() {
     		
     		synchronized (queue) {
@@ -43,6 +81,7 @@ public class WorkQueue {
     		for (int i = 0; i < myThreads; i++) {
     			
     			try {
+    				
     				this.threads[i].join();
 			
     			} catch (InterruptedException e) {
@@ -51,27 +90,44 @@ public class WorkQueue {
     		}
    }		
     
+    /** 
+     * Private class extends from Threads classs
+     * @author Rong
+     *
+     */
+    
     private class PoolWorker extends Thread {
     	
+    		/** 
+    		 * Public run method that navigates each 
+    		 * thread to execute based on certain conditions 
+    		 */
         public void run() {
         	
         		Runnable r;
 
-        		while (shutDown == false || !queue.isEmpty()) {
+        		while (true) {
         			synchronized(queue) {
         				if (shutDown == true && queue.isEmpty()) {
         					break;
         				} 
         				while(shutDown == false && queue.isEmpty()) {
         					
-                        try {
-                            queue.wait();
-                        }
-                        catch (InterruptedException ignored) {
-                        }
-                    }
+        					try {
+     
+        						queue.wait();
+        						
+        					}
+        					catch (InterruptedException i) {
+        					}
+        				}
+        				
+        				if (shutDown == true && queue.isEmpty()) {
+        					break;
+        				}
         				
         				r = (Runnable) queue.removeFirst();
+        				
         			}
         		
         			try {
@@ -82,6 +138,6 @@ public class WorkQueue {
         				System.out.println("can't run exception");
         			}
         		}
-       }
+        }
     }
 }    

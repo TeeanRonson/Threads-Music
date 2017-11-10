@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import songfinder.DriverSongFinder;
+import songfinder.Driver;
 
 /**
  * Adapted from sjengle.
@@ -52,12 +52,12 @@ public class ThreadStressTest {
 		
 		try {
 			for (int i = 0; i < WARM_RUNS; i++) {
-				DriverSongFinder.main(args);
+				Driver.main(args);
 			}
 
 			for (int i = 0; i < TIME_RUNS; i++) {
 				start = System.nanoTime();
-				DriverSongFinder.main(args);
+				Driver.main(args);
 				total += System.nanoTime() - start;
 			}
 		}

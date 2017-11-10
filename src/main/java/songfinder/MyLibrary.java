@@ -12,6 +12,10 @@ import java.util.Collections;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import Generics.ReentrantLock;
+import Utilities.ByArtistSorter;
+import Utilities.ByTitleSorter;
+
 import java.util.Collections;
 
 /**
@@ -25,8 +29,10 @@ public class MyLibrary {
 	private TreeMap<String, TreeSet<SingleSongInfo>> byArtist;	
 	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
 	private TreeMap<String, TreeSet<String>> byTag;
-	private TreeMap<String, SingleSongInfo> findTitle;
+	private TreeMap<String, SingleSongInfo> byTrackId;
 	private ReentrantLock rwl;
+	private ByArtistSorter sortArtist;
+	private ByTitleSorter sortTitle;
 	
 	/**
 	 * Constructor takes no inputs
@@ -37,8 +43,11 @@ public class MyLibrary {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTag = new TreeMap<String, TreeSet<String>>();
-		this.findTitle = new TreeMap<String, SingleSongInfo>();
+		this.byTrackId = new TreeMap<String, SingleSongInfo>();
 		rwl = new ReentrantLock();
+		sortArtist = new ByArtistSorter();
+		sortTitle = new ByTitleSorter();
+		
 	}
 	
 	/**
@@ -66,8 +75,8 @@ public class MyLibrary {
 	 */
 	private void findTitle(SingleSongInfo object) {
 		
-		if (!this.findTitle.containsKey(object.getTrackId())) {
-			this.findTitle.put(object.getTrackId(), object);
+		if (!this.byTrackId.containsKey(object.getTrackId())) {
+			this.byTrackId.put(object.getTrackId(), object);
 		}
 	}
 	
@@ -80,9 +89,8 @@ public class MyLibrary {
 	 */
 	private void addByArtist(SingleSongInfo object) {
 		
-		ByArtistSorter bas = new ByArtistSorter();
 		if (!this.byArtist.containsKey(object.getArtist())) {
-			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(bas);
+			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(sortArtist);
 			list.add(object);
 			this.byArtist.put(object.getArtist(), list);
 			
@@ -102,9 +110,9 @@ public class MyLibrary {
 	 */
 	private void addByTitle(SingleSongInfo object) {
 
-		ByTitleSorter bts = new ByTitleSorter();
+		
 		if (!this.byTitle.containsKey(object.getTitle())) {
-			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(bts);
+			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(sortTitle);
 			list.add(object);
 			this.byTitle.put(object.getTitle(), list);
 			

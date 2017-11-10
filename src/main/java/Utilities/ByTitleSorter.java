@@ -1,6 +1,8 @@
-package songfinder;
+package Utilities;
 
 import java.util.Comparator;
+
+import songfinder.SingleSongInfo;
 
 public class ByTitleSorter implements Comparator<SingleSongInfo> {
 	

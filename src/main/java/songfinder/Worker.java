@@ -11,16 +11,49 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+
+/**
+ * Worker class that implements Runnable
+ * Each new Worker object will be passed into 
+ * the WorkQueue method execute.
+ * 
+ * Private data members 
+ * @author Rong
+ *
+ */
 public class Worker implements Runnable {
 	
 	private MyLibrary library; 
 	private Path p;
 	
+	
+	/**
+	 * Initialises two private data members
+	 * to be the values passed into the constructor 
+	 * @param library
+	 * @param p
+	 */
 	public Worker(MyLibrary library, Path p) {
 		this.library = library;
 		this.p = p;
 	}
 
+	
+	/**Run method of the Worker class
+	 * Processes only .json files
+	 * Reads in data from the .json files and returns 
+	 * a SingleSongInfo object with the extracted 
+	 * information. 
+	 * 
+	 * Adds the valid SingleSongInfo object to 
+	 * MyLibrary class
+	 * 
+	 * Used sources: 
+	 * https://stackoverflow.com/questions/24179163/parse-json-of-two-dimensional-array-in-java
+	 * https://stackoverflow.com/questions/18544133/parsing-json-array-into-java-util-list-with-gson
+	 * @param p
+	 * @return
+	 */
 	@Override
 	public void run() {
 		

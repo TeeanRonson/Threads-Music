@@ -1,4 +1,4 @@
-package songfinder;
+package Generics;
 
 import java.util.HashMap;
 

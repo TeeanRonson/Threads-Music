@@ -1,6 +1,6 @@
 
 package songfinder;
-
+// class in a file thats not named properly
 import java.util.HashMap;
 
 /**
@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @author srollins
  *
  */
-public class DriverSongFinder {
+public class Driver {
 	/*
 	 * Main method.
 	 * @param args
@@ -28,7 +28,7 @@ public class DriverSongFinder {
 			MyLibrary ml = new MyLibrary();
 			LibraryBuilder lb = new LibraryBuilder();
 		
-			for (int i = 0; i < args.length; i += 2) {
+			for (int i = 0; i < args.length - 1; i += 2) {
 				checker.put(args[i], args[i + 1]);
 			}
 	
@@ -43,13 +43,13 @@ public class DriverSongFinder {
 						checker.put(threads, "10");
 					}
 				
-					ml = lb.buildLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
-					ml.artistAndTitleOutput(checker.get(output), checker.get(order));
-				
 				} catch (NumberFormatException e) {
-					e.getLocalizedMessage();
 					System.out.println("Argument value is not an integer");
+					checker.put(threads, "10");
 				}
+				
+				ml = lb.buildLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
+				ml.artistAndTitleOutput(checker.get(output), checker.get(order));
 			}		
 		}
 	}	
