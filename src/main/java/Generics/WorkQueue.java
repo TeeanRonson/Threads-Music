@@ -54,14 +54,12 @@ public class WorkQueue {
     public void execute(Runnable r) throws RejectedExecutionException {
     	
     		
-    	
-    		if (this.shutDown == false) {
-    			synchronized(queue) {
-    				if (this.shutDown == true) {
-    					throw new RejectedExecutionException("Queue is closed");
-    				}
-    					queue.addLast(r);
-    					queue.notify();
+    		if (this.shutDown == true) {
+    			throw new RejectedExecutionException("Queue is closed");
+    		} else {
+    			synchronized(queue) {	
+    				queue.addLast(r);
+    				queue.notify();
     			}
     			
     		}
@@ -119,9 +117,6 @@ public class WorkQueue {
 
         		while (true) {
         			synchronized(queue) {
-        				if (shutDown == true && queue.isEmpty()) {
-        					break;
-        				} 
         				while(shutDown == false && queue.isEmpty()) {
         					
         					try {
