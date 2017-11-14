@@ -53,7 +53,6 @@ public class WorkQueue {
      */
     public void execute(Runnable r) throws RejectedExecutionException {
     	
-    		
     		if (this.shutDown == true) {
     			throw new RejectedExecutionException("Queue is closed");
     		} else {
@@ -61,7 +60,6 @@ public class WorkQueue {
     				queue.addLast(r);
     				queue.notify();
     			}
-    			
     		}
     }
     
@@ -133,7 +131,7 @@ public class WorkQueue {
         				r = (Runnable) queue.removeFirst();
         				
         			}
-        		
+        			
         			try {
         				r.run();
         			}
