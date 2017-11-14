@@ -2,6 +2,8 @@ package Generics;
 
 import java.util.LinkedList;
 
+import Utilities.RejectedExecutionException;
+
 /** 
  * WorkQueue class used for Multi-threading
  * Declares private data members
@@ -47,13 +49,21 @@ public class WorkQueue {
      * Adds each new object to the work queue 
      * and notifies threads
      * @param r
+     * @throws RejectedExecutionException 
      */
-    public void execute(Runnable r) {
+    public void execute(Runnable r) throws RejectedExecutionException {
+    	
+    		
+    	
     		if (this.shutDown == false) {
     			synchronized(queue) {
-    				queue.addLast(r);
-    				queue.notify();
+    				if (this.shutDown == true) {
+    					throw new RejectedExecutionException("Queue is closed");
+    				}
+    					queue.addLast(r);
+    					queue.notify();
     			}
+    			
     		}
     }
     
@@ -62,9 +72,11 @@ public class WorkQueue {
      * stops accepting new objects into 
      * the queue 
      */
-    public void shutDown() {
+    public boolean shutDown() {
    
     		this.shutDown = true;
+    		
+    		return this.shutDown;
     }
     
     /** 
@@ -95,7 +107,6 @@ public class WorkQueue {
      * @author Rong
      *
      */
-    
     private class PoolWorker extends Thread {
     	
     		/** 
@@ -114,9 +125,7 @@ public class WorkQueue {
         				while(shutDown == false && queue.isEmpty()) {
         					
         					try {
-     
         						queue.wait();
-        						
         					}
         					catch (InterruptedException i) {
         					}

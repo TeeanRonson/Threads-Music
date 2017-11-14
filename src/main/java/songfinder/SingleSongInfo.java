@@ -12,6 +12,7 @@ public class SingleSongInfo {
 	private String title; 
 	private String trackId;
 	private TreeSet<String> tagList;
+	private TreeSet<String> similarSongs;
 	 
 	/**
 	 * Constructor that takes in four inputs: 
@@ -21,11 +22,12 @@ public class SingleSongInfo {
 	 * @param trackId
 	 * @param tagList
 	 */
-	public SingleSongInfo(String artist, String title, String trackId, TreeSet<String> tagList) {
+	public SingleSongInfo(String artist, String title, String trackId, TreeSet<String> tagList, TreeSet<String> similarSongs) {
 		this.artist = artist; 
 		this.title = title;
 		this.trackId = trackId;
 		this.tagList = tagList;
+		this.similarSongs = similarSongs;
 	}
 
 	public String getArtist() {
@@ -44,7 +46,11 @@ public class SingleSongInfo {
 		return this.tagList;
 	}
 	
+	public TreeSet<String> getSimilarSongs() {
+		return this.similarSongs;
+	}
+	
 	public String toString() {
-		return "Artist: " + this.artist + " \nTitle: " + this.title + " \nTrackId: " + this.trackId + " ";
+		return "Artist: " + this.artist + " \nTitle: " + this.title + " \nTrackId: " + this.trackId + "\n";
 	}
 }

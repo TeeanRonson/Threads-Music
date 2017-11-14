@@ -59,10 +59,9 @@ public class Worker implements Runnable {
 		
 		SingleSongInfo ssi = null;
 		TreeSet<String> tagList = new TreeSet<String>();
+		TreeSet<String> similarSongs = new TreeSet<String>();
 	
 		if (p.toString().toLowerCase().endsWith(".json")) {
-			
-			Gson gson = new Gson();
 			
 			try (FileReader fr = new FileReader(p.toFile().getAbsolutePath())) {
 				
@@ -74,15 +73,24 @@ public class Worker implements Runnable {
 				String title = obj.get("title").getAsString();
 				String trackId = obj.get("track_id").getAsString();
 				JsonArray getTags = obj.getAsJsonArray("tags");
-				String tags = "";
+				JsonArray getSimilars = obj.getAsJsonArray("similars");
+				String tag = "";
+				String similar = "";
 				
 				for (int i = 0; i < getTags.size(); i++) {
 					JsonArray internalArray = (JsonArray) getTags.get(i);
-					tags = internalArray.get(0).getAsString();
-					tagList.add(tags);
-				}		
+					tag = internalArray.get(0).getAsString();
+					tagList.add(tag);
+				}
 				
-				ssi = new SingleSongInfo(artist, title, trackId, tagList);
+				for (int i = 0; i < getSimilars.size(); i++) {
+					JsonArray internalArray = (JsonArray) getSimilars.get(i);
+					similar = internalArray.get(0).getAsString();
+					similarSongs.add(similar);
+					
+				}
+				
+				ssi = new SingleSongInfo(artist, title, trackId, tagList, similarSongs);
 			
 				if (ssi != null) {
 					this.library.addNewSong(ssi);

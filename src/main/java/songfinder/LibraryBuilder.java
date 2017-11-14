@@ -19,6 +19,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import Generics.WorkQueue;
+import Utilities.RejectedExecutionException;
 
 public class LibraryBuilder {
 	/**
@@ -40,6 +41,7 @@ public class LibraryBuilder {
 	 * all sub-folders
 	 * @param directory
 	 * @return
+	 * @throws RejectedExecutionException 
 	 * @throws InterruptedException 
 	 */
 	public MyLibrary buildLibrary(String directory, int threadsSize) {
@@ -49,8 +51,15 @@ public class LibraryBuilder {
 		
 		try (Stream<Path> paths = Files.walk(path)) {
 			
-			paths.forEach(p -> wq.execute(new Worker(this.addToLibrary, p))); 
-			
+			paths.forEach(p -> {
+				try {
+					wq.execute(new Worker(this.addToLibrary, p));
+					
+				} catch (RejectedExecutionException e) {
+					System.out.println("Queue has been closed");
+				}
+			});
+		
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
