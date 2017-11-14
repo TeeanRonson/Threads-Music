@@ -128,16 +128,16 @@ public class ProjectTest {
 	}
 
 	/**
-	 * Checks whether {@link DriverSongFinder} will run without generating any exceptions.
+	 * Checks whether {@link Driver} will run without generating any exceptions.
 	 * Will print the stack trace if an exception occurs. Designed to be used
 	 * within an unit test.
 	 *
 	 * @param testName - name of test for debugging
-	 * @param args - arguments to pass to {@link DriverSongFinder}
+	 * @param args - arguments to pass to {@link Driver}
 	 */
 	public static void checkExceptions(String testName, String[] args) {
 		try {
-			DriverSongFinder.main(args);
+			Driver.main(args);
 		}
 		catch (Exception e) {
 			StringWriter writer = new StringWriter();
@@ -150,12 +150,12 @@ public class ProjectTest {
 	}
 
 	/**
-	 * Checks whether {@link DriverSongFinder} generates the expected output without any
+	 * Checks whether {@link Driver} generates the expected output without any
 	 * exceptions. Will print the stack trace if an exception occurs. Designed
 	 * to be used within an unit test.
 	 *
 	 * @param testName - name of test for debugging
-	 * @param args - arguments to pass to {@link DriverSongFinder}
+	 * @param args - arguments to pass to {@link Driver}
 	 * @param actual - name of actual file in result directory
 	 * @param expected - name of expected file in output directory
 	 */
@@ -171,7 +171,7 @@ public class ProjectTest {
 				Files.createDirectories(actual.getParent());
 			}
 
-			DriverSongFinder.main(args);
+			Driver.main(args);
 
 			int count = checkFiles(actual, expected);
 
@@ -192,12 +192,12 @@ public class ProjectTest {
 
 
 	/**
-	 * Checks whether {@link DriverSongFinder} generates the expected output without any
+	 * Checks whether {@link Driver} generates the expected output without any
 	 * exceptions. Will print the stack trace if an exception occurs. Designed
 	 * to be used within an unit test.
 	 *
 	 * @param testName - name of test for debugging
-	 * @param args - arguments to pass to {@link DriverSongFinder}
+	 * @param args - arguments to pass to {@link Driver}
 	 * @param actual - name of actual file in result directory
 	 * @param expected - name of expected file in output directory
 	 */
@@ -213,7 +213,7 @@ public class ProjectTest {
 				Files.createDirectories(actual.getParent());
 			}
 
-			DriverSongFinder.main(args);
+			Driver.main(args);
 
 			JsonParser parser = new JsonParser();
 
