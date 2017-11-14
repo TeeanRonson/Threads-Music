@@ -68,61 +68,61 @@ public class Driver {
 				
 			// -----------------------------------------------------------------------------------------------------------------------
 				
-				String inputPath = checker.get(searchInput).toLowerCase();
-				TreeSet<String> artistNames = new TreeSet<String>();
-				TreeSet<String> titleNames = new TreeSet<String>();
-				TreeSet<String> tagNames = new TreeSet<String>();
-				
-				String artist = "";
-				String title = "";
-				String tag = "";		
-				
-				if (inputPath.endsWith(".json")) {
-					
-					try (FileReader fr = new FileReader(inputPath)) {
-						
-						JsonParser parser = new JsonParser();
-						JsonElement element = parser.parse(fr);
-						JsonObject obj = element.getAsJsonObject();
-						
-						JsonArray getArtist = obj.getAsJsonArray("searchByArtist");
-						JsonArray getTitle = obj.getAsJsonArray("searchByArtist");
-						JsonArray getTag = obj.getAsJsonArray("searchByArtist");
-						
-						for (int i = 0; i < getArtist.size(); i++) {
-							artist = getArtist.get(i).getAsString();
-							artistNames.add(artist);
-						}
-						
-						for (int i = 0; i < getTitle.size(); i++) {
-							title = getTitle.get(i).getAsString();
-							titleNames.add(title);
-						}
-						
-						for (int i = 0; i < getTag.size(); i++) {
-							tag = getTag.get(i).getAsString();
-							tagNames.add(tag);
-						}
-						
-						
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				for (String x: artistNames) {
-					ml.outputByArtist(x);
-				}
-				
-				for (String y: titleNames) {
-					ml.outputByTitle(y);
-				}
-				
-				for (String z: tagNames) {
-					ml.outputByTag(z);
-				}
+//				String inputPath = checker.get(searchInput).toLowerCase();
+//				TreeSet<String> artistNames = new TreeSet<String>();
+//				TreeSet<String> titleNames = new TreeSet<String>();
+//				TreeSet<String> tagNames = new TreeSet<String>();
+//				
+//				String artist = "";
+//				String title = "";
+//				String tag = "";		
+//				
+//				if (inputPath.endsWith(".json")) {
+//					
+//					try (FileReader fr = new FileReader(inputPath)) {
+//						
+//						JsonParser parser = new JsonParser();
+//						JsonElement element = parser.parse(fr);
+//						JsonObject obj = element.getAsJsonObject();
+//						
+//						JsonArray getArtist = obj.getAsJsonArray("searchByArtist");
+//						JsonArray getTitle = obj.getAsJsonArray("searchByArtist");
+//						JsonArray getTag = obj.getAsJsonArray("searchByArtist");
+//						
+//						for (int i = 0; i < getArtist.size(); i++) {
+//							artist = getArtist.get(i).getAsString();
+//							artistNames.add(artist);
+//						}
+//						
+//						for (int i = 0; i < getTitle.size(); i++) {
+//							title = getTitle.get(i).getAsString();
+//							titleNames.add(title);
+//						}
+//						
+//						for (int i = 0; i < getTag.size(); i++) {
+//							tag = getTag.get(i).getAsString();
+//							tagNames.add(tag);
+//						}
+//						
+//						
+//					} catch (FileNotFoundException e) {
+//						e.printStackTrace();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+//				
+//				for (String x: artistNames) {
+//					ml.outputByArtist(x);
+//				}
+//				
+//				for (String y: titleNames) {
+//					ml.outputByTitle(y);
+//				}
+//				
+//				for (String z: tagNames) {
+//					ml.outputByTag(z);
+//				}
 				
 //				ml.outputByArtist("Casual");
 //				ml.outputByTitle("Amor De Cabaret");
