@@ -57,6 +57,8 @@ public class WorkQueue {
     	
     		if (this.shutDown == false) {
     			synchronized(queue) {
+//TODO: this condition shouldn't be true unless another thread shut down bewteen the outer condition and this one.
+//Better to move this if condition to be first.				
     				if (this.shutDown == true) {
     					throw new RejectedExecutionException("Queue is closed");
     				}
@@ -119,6 +121,7 @@ public class WorkQueue {
 
         		while (true) {
         			synchronized(queue) {
+//TODO: since you check this condition after the while you don't need to also check before.					
         				if (shutDown == true && queue.isEmpty()) {
         					break;
         				} 
