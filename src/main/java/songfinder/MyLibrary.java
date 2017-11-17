@@ -1,6 +1,8 @@
 package songfinder;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -32,9 +34,9 @@ import com.google.gson.JsonParser;
 public class MyLibrary {
 	private TreeMap<String, TreeSet<SingleSongInfo>> byArtist;	
 	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
-	private TreeMap<String, TreeSet<String>> byTag;
-	private TreeMap<String, SingleSongInfo> byTrackId;
+	private TreeMap<String, TreeSet<String>> byTagToTrackId;
 	private TreeMap<String, TreeSet<String>> byTagToTitle;
+	private TreeMap<String, SingleSongInfo> byTrackId;
 	private ReentrantLock rwl;
 	private ByArtistSorter sortArtist;
 	private ByTitleSorter sortTitle;
@@ -47,9 +49,9 @@ public class MyLibrary {
 	public MyLibrary() {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
-		this.byTag = new TreeMap<String, TreeSet<String>>();
+		this.byTagToTrackId = new TreeMap<String, TreeSet<String>>(); // possibly merge these two data structures
+		this.byTagToTitle = new TreeMap<String, TreeSet<String>>();	// -- 
 		this.byTrackId = new TreeMap<String, SingleSongInfo>();
-		this.byTagToTitle = new TreeMap<String, TreeSet<String>>();
 		rwl = new ReentrantLock();
 		sortArtist = new ByArtistSorter();
 		sortTitle = new ByTitleSorter();
@@ -89,13 +91,14 @@ public class MyLibrary {
 		}
 	}
 	
+	
 	private void addByTagToTitle(SingleSongInfo object) {
 		
 		TreeSet<String> listOfTags = object.getTagList();
 		for (String x: listOfTags) {
 			if (x != null) {
 				if (!this.byTagToTitle.containsKey(x)) {
-					TreeSet<String> titles = new TreeSet<String>();
+					TreeSet<String> titles = new TreeSet<String>(); // change from <String> to <SingleSongInfo>
 					titles.add(object.getTitle());
 					this.byTagToTitle.put(x, titles);
 				
@@ -107,6 +110,39 @@ public class MyLibrary {
 			}	
 		}
 		
+	}
+	
+	/**
+	 * Private method takes as input a SingleSongInfo object
+	 * adds the object to the data structure.
+	 * Uses a TreeMap so it automatically sorts the key values
+	 * (tags)
+	 * 
+	 * If the tag already exists, it adds the trackId to the existing
+	 * key. 
+	 * If the tag doesn't exist, it creates a new ArrayList, uses the tag
+	 * as a new key, and places the ArrayList as the value. 
+	 * @param object
+	 */	
+	private void addByTagToTrackId(SingleSongInfo object) {
+		
+		// implement to case sensitivity
+		
+		TreeSet<String> listOfTags = object.getTagList();
+		for (String x: listOfTags) {
+			if (x != null) {
+				if (!this.byTagToTrackId.containsKey(x)) {
+					TreeSet<String> ids = new TreeSet<String>();
+					ids.add(object.getTrackId());
+					this.byTagToTrackId.put(x, ids);
+				
+				} else {
+			
+					TreeSet<String> ids = this.byTagToTrackId.get(x);
+					ids.add(object.getTrackId());
+				}
+			}	
+		}
 	}
 	
 	/**
@@ -154,54 +190,8 @@ public class MyLibrary {
 		
 	}	
 	
-	/**
-	 * Private method takes as input a SingleSongInfo object
-	 * adds the object to the data structure.
-	 * Uses a TreeMap so it automatically sorts the key values
-	 * (tags)
-	 * 
-	 * If the tag already exists, it adds the trackId to the existing
-	 * key. 
-	 * If the tag doesn't exist, it creates a new ArrayList, uses the tag
-	 * as a new key, and places the ArrayList as the value. 
-	 * @param object
-	 */	
-	private void addByTagToTrackId(SingleSongInfo object) {
-		
-		// implement to case sensitivity
-		
-		TreeSet<String> listOfTags = object.getTagList();
-		for (String x: listOfTags) {
-			if (x != null) {
-				if (!this.byTag.containsKey(x)) {
-					TreeSet<String> ids = new TreeSet<String>();
-					ids.add(object.getTrackId());
-					this.byTag.put(x, ids);
-				
-				} else {
-			
-					TreeSet<String> ids = this.byTag.get(x);
-					ids.add(object.getTrackId());
-				}
-			}	
-		}
-	}
-
-	public JsonObject outputByArtist(String artist) {
-		
-		JsonObject searchByArtist = new JsonObject();
-		JsonArray artistArray = new JsonArray();
-		
-		artistArray.add(searchByArtist(artist));
-		searchByArtist.add("searchByArtist", artistArray);
-		
-//		System.out.println(searchByArtist);
-		
-		return searchByArtist;
-	}
-	
-	
 	private JsonObject searchByArtist(String artist) {
+		
 		
 		JsonArray similarsList = new JsonArray();
 		JsonObject artistObject = new JsonObject();
@@ -212,18 +202,21 @@ public class MyLibrary {
 			this.rwl.lockRead();
 			
 			if (this.byArtist.get(artist) == null) {
-				System.out.println("Artist not found");
+				artistObject.addProperty("artist", artist);
+				artistObject.add("similars", similarsList);
+				
 			} else { 
 			
 				TreeSet<SingleSongInfo> songs = this.byArtist.get(artist); // returns a TreeSet of SingleSongInfo objects
 				for (SingleSongInfo x: songs) {		
 					if (x != null) {
-						TreeSet<String> similarList = x.getSimilarSongs();	// list of songs similar to selected song (in trackId's)
-						for (String y: similarList) {		
+						TreeSet<String> trackIds = x.getSimilarSongs();	// list of songs similar to selected song (in trackId's)
+						for (String y: trackIds) {		
 							result.add(y);
 						}	
 					}	
 				}
+					
 			
 				for (String z: result) {
 					JsonObject similarObject = new JsonObject();
@@ -248,37 +241,26 @@ public class MyLibrary {
 		}
 	}	
 	
-	public JsonObject outputByTitle(String title) {
-		
-		JsonObject searchByTitle = new JsonObject();
-		JsonArray titleArray = new JsonArray();
-		
-		titleArray.add(searchByTitle(title));
-		searchByTitle.add("searchByTitle", titleArray);
-		
-		System.out.println(searchByTitle);
-		return searchByTitle;
-		
-	}
-	
 	private JsonObject searchByTitle(String title) {
 		
 		JsonArray similarsList = new JsonArray();
 		JsonObject titleObject = new JsonObject();
 		TreeSet<String> result = new TreeSet<String>();
-		String input = title.toLowerCase(); // case sensitivity
 		
 		try { 
+			
 			this.rwl.lockRead();
 				
 			if (this.byTitle.get(title) == null) {
-				System.out.println("Title not found");
+				titleObject.add("similars", similarsList);
+				titleObject.addProperty("title", title);
+				
 			} else { 
 				
 				TreeSet<SingleSongInfo> songs = this.byTitle.get(title);
 				for (SingleSongInfo x: songs) {
-					TreeSet<String> similarList = x.getSimilarSongs();
-					for (String y: similarList) {
+					TreeSet<String> trackIds = x.getSimilarSongs();
+					for (String y: trackIds) {
 							result.add(y);
 					}	
 				}
@@ -295,8 +277,12 @@ public class MyLibrary {
 					}	
 				}
 			
-				titleObject.add("similars", similarsList);
+				
 				titleObject.addProperty("title", title);
+				titleObject.add("similars", similarsList);
+				
+			
+				
 			}
 				return titleObject;
 				
@@ -305,89 +291,146 @@ public class MyLibrary {
 		}	
 	}
 	
-	public JsonObject outputByTag(String tag) {
-		
-		JsonObject searchByTag = new JsonObject();
-		JsonArray tagArray = new JsonArray();
-		
-		tagArray.add(searchByTag(tag));
-		searchByTag.add("searchByTag", tagArray);
-		
-		return searchByTag;
-		
-	}
-	
 	private JsonObject searchByTag(String tag) {
 	
 		JsonObject tagObject = new JsonObject();
-		JsonArray array = new JsonArray();
-		String input = tag.toLowerCase();
-		
+		JsonArray similarsList = new JsonArray();
+	
 		// check case sensitivity 
+		
 		try {
 			
 			this.rwl.lockRead();
-			for (String x: byTag.get(input)) { 
-				JsonObject similarObject = new JsonObject();
-				if (this.byTrackId.get(x) != null) {
-					similarObject.addProperty("artist", byTrackId.get(x).getArtist());
-					similarObject.addProperty("trackId", byTrackId.get(x).getTrackId());
-					similarObject.addProperty("title", byTrackId.get(x).getTitle());
+			
+			if (this.byTagToTrackId.get(tag) == null) {
+				System.out.println("No songs related to tag");
+				
+			} else { 
+				
+				for (String x: byTagToTrackId.get(tag)) { 
+					JsonObject similarObject = new JsonObject();
+					if (this.byTrackId.get(x) != null) {
+						similarObject.addProperty("artist", byTrackId.get(x).getArtist());
+						similarObject.addProperty("title", byTrackId.get(x).getTitle());
+						similarObject.addProperty("trackId", byTrackId.get(x).getTrackId());
+					}
+					
+					if (similarObject.size() != 0) {
+						similarsList.add(similarObject);
+					}	
 				}
-				if (similarObject.size() != 0) {
-					array.add(similarObject);
-				}	
+			
+				
+				tagObject.addProperty("tag", tag);
+				tagObject.add("similars", similarsList);
+				
 			}
-			
-			tagObject.add("similars", array);
-			tagObject.addProperty("tag", input);
-			
-			return tagObject; // need to put this into another object with "searchBytag, array"
+			return tagObject;
 		} finally {
 			this.rwl.unlockRead();
+		}	
+	}
+	
+	private JsonObject search(String inputFile) {
+		
+		Path path = Paths.get(inputFile);
+		JsonObject dummy = new JsonObject();
+		JsonObject searched = new JsonObject();
+		JsonArray artistArray = new JsonArray();
+		JsonArray titleArray = new JsonArray();
+		JsonArray tagArray = new JsonArray();
+		
+		try { 
+			
+			this.rwl.lockRead();
+			
+		if (!path.toString().toLowerCase().endsWith(".json")) {
+			System.out.println("Not a json file");
+			
+		} else { 
+				
+			try (FileReader fr = new FileReader(path.toFile().getAbsolutePath())) {
+				
+				JsonParser parser = new JsonParser();
+				JsonElement element = parser.parse(fr);
+				JsonObject obj = element.getAsJsonObject();
+				
+				JsonArray getArtist = obj.getAsJsonArray("searchByArtist");
+				JsonArray getTitle = obj.getAsJsonArray("searchByTitle");
+				JsonArray getTag = obj.getAsJsonArray("searchByTag");
+				
+				if (getArtist != null) {
+					for (int i = 0; i < getArtist.size(); i++) {
+						dummy = searchByArtist(getArtist.get(i).getAsString());	
+						artistArray.add(dummy);
+					}
+				}	
+				
+				if (getTag != null) {
+					for (int i = 0; i < getTag.size(); i++) {
+						dummy = searchByTag(getTag.get(i).getAsString());
+						tagArray.add(dummy);
+					}
+				}	
+				
+				if (getTitle != null) {
+					for (int i = 0; i < getTitle.size(); i++) {
+						dummy = searchByTitle(getTitle.get(i).getAsString());
+						titleArray.add(dummy);
+					}
+				}	
+				
+				if (artistArray.size() != 0) {
+					searched.add("searchByArtist", artistArray);
+				}
+				
+				if (titleArray.size() != 0) {
+					searched.add("searchByTitle", titleArray);
+				}	
+				
+				if (tagArray.size() != 0) {
+					searched.add("searchByTag", tagArray);
+				}
+				
+			} catch (FileNotFoundException e) {
+				System.out.println(e.getMessage());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 		}
+		
+		return searched;
+		
+		} finally { 
+			this.rwl.unlockRead();
+		}	
 		
 	}
 	
-	public void searchResultsOutput(String outputFile) {
+	public void searchResultsOutput(String inputFile, String outputFile) {
 		
+		if (inputFile != null && outputFile != null) {
 		
-		Path outPath = Paths.get(outputFile);
-		outPath.getParent().toFile().mkdirs();
-		
-		boolean successful = false;
-		
-		try {
+			Path outPath = Paths.get(outputFile);
+			outPath.getParent().toFile().mkdirs();
 			
-			this.rwl.lockRead();
-		
-			try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
+			try {
 				
-				
-				
+				this.rwl.lockRead();
 			
-		
-			} catch (IOException e) {
-			e.getMessage();
+				try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
+					
+					out.write(search(inputFile).toString());
+					
+				} catch (IOException e) {
+				e.getMessage();
+				}
+			} finally {
+				this.rwl.unlockRead();
 			}
-		} finally {
-			this.rwl.unlockRead();
-		}
+		}	
 	}			
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Public method takes as input the output directory
@@ -433,10 +476,10 @@ public class MyLibrary {
 				
 				} else {
 				
-					Set<String> tags = byTag.keySet();
+					Set<String> tags = byTagToTrackId.keySet();
 					for (String x: tags) {
 						out.write(x + ": ");
-						for(String id: byTag.get(x)) {
+						for(String id: byTagToTrackId.get(x)) {
 							out.write(id + " ");
 						}
 						out.write("\n");
