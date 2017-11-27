@@ -25,14 +25,12 @@ public class BaseServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.setStatus(HttpServletResponse.SC_OK);
 		return response.getWriter();
-
 	}
 	
 	protected String debugger(String word) {
 		return "<p>" + word + "</p>";
 	}
-	
-	
+
 	/*
 	 * Return the beginning part of the HTML page.
 	 */
@@ -40,15 +38,12 @@ public class BaseServlet extends HttpServlet {
 		return "<html><head><title>" + title + "</title></head><body>";		
 	}
 
-	
 	/*
 	 * Return the last part of the HTML page. 
 	 */
 	protected String footer() {
 		return "</body></html>";
 	}
-	
-	
 	
 	/*
 	 * Given a request, return the name found in the 

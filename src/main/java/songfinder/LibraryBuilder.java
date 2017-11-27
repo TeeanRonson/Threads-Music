@@ -26,12 +26,14 @@ public class LibraryBuilder {
 	 * Declares a private data member
 	 */
 	private MyLibrary addToLibrary;
+	private MyArtistLibrary addToArtiLibrary; 
 	/**
 	 * Constructor takes no input and initialises
 	 * the private data member
 	 */
 	public LibraryBuilder() {
 		this.addToLibrary = new MyLibrary();
+		this.addToArtiLibrary = new MyArtistLibrary();
 	}
 	
 	/**
@@ -53,7 +55,7 @@ public class LibraryBuilder {
 			
 			paths.forEach(p -> {
 				try {
-					wq.execute(new Worker(this.addToLibrary, p));
+					wq.execute(new Worker(this.addToLibrary, p, addToArtiLibrary));
 					
 				} catch (RejectedExecutionException e) {
 					System.out.println("Queue has been closed");

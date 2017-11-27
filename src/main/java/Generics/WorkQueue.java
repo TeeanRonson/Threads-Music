@@ -99,7 +99,7 @@ public class WorkQueue {
    }		
     
     /** 
-     * Private class extends from Threads classs
+     * Private class extends from Threads class
      * @author Rong
      *
      */
@@ -137,7 +137,7 @@ public class WorkQueue {
         			}
         			catch (RuntimeException e) {
         				e.getMessage();
-        				System.out.println("can't run exception");
+        				System.out.println("Rong, can't run exception occurring");
         			}
         		}
         }

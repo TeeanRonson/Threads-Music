@@ -45,7 +45,6 @@ public class MyLibrary {
 	 * Constructor takes no inputs
 	 * Initialises private data members
 	 */
-	
 	public MyLibrary() {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
@@ -54,8 +53,6 @@ public class MyLibrary {
 		rwl = new ReentrantLock();
 		sortArtist = new ByArtistSorter();
 		sortTitle = new ByTitleSorter();
-		
-		
 	}
 	
 	/**
@@ -65,15 +62,13 @@ public class MyLibrary {
 	 * respective private methods
 	 * @param object
 	 */
-	
 	public void addNewSong(SingleSongInfo object) {
 		this.rwl.lockWrite();
 		addByArtist(object);
 		addByTitle(object);
 		addByTagToTrackId(object);
 		addByTrackId(object);
-		this.rwl.unlockWrite();
-		
+		this.rwl.unlockWrite();	
 	}
 	
 	/**
@@ -139,8 +134,6 @@ public class MyLibrary {
 			TreeSet<SingleSongInfo> list = this.byArtist.get(object.getArtist());
 			list.add(object);
 		}
-		
-//		System.out.println("Not empty here " + this.byArtist.keySet());
 	}
 	
 	/**
@@ -163,10 +156,16 @@ public class MyLibrary {
 			TreeSet<SingleSongInfo> list = this.byTitle.get(object.getTitle());
 			list.add(object);
 		}
-		
-		
 	}	
 	
+	/**
+	 * Private method creates JsonObjects and 
+	 * adds each new object into a JsonArray
+	 * 
+	 * Takes as parameter a TreeSet of track id's
+	 * @param result
+	 * @return
+	 */
 	private JsonArray createJson(TreeSet<String> result) {
 		
 		JsonArray similarsList = new JsonArray();
@@ -186,6 +185,13 @@ public class MyLibrary {
 		return similarsList;
 	}
 	
+	/**
+	 * Public method takes as input a given artist 
+	 * and returns a JsonObject with the artist name
+	 * and a list of similar songs related to that artist
+	 * @param artist
+	 * @return
+	 */
 	public JsonObject searchByArtist(String artist) {
 		
 		JsonArray similarsList = new JsonArray();
@@ -215,14 +221,19 @@ public class MyLibrary {
 				artistObject.addProperty("artist", artist);
 				artistObject.add("similars", similarsList);
 			}
-			
-			return artistObject;
-				
+			return artistObject;	
 		} finally { 
 			this.rwl.unlockRead();
 		}
 	}	
 	
+	/**
+	 * Public method takes as input a given title 
+	 * and returns a JsonObject with the title name
+	 * and a list of similar songs related to that title
+	 * @param title
+	 * @return
+	 */
 	public JsonObject searchByTitle(String title) {
 		
 		JsonArray similarsList = new JsonArray();
@@ -251,17 +262,21 @@ public class MyLibrary {
 				titleObject.addProperty("title", title);
 				titleObject.add("similars", similarsList);
 			}
-				return titleObject;
-				
+			return titleObject;
 			} finally { 
 				this.rwl.unlockRead();
 		}	
 	}
 	
+	/**
+	 * Public method takes as input a given tag and
+	 * returns a JsonObject with the tag name and
+	 * a list of similar songs related to that tag
+	 * @param tag
+	 * @return
+	 */
 	public JsonObject searchByTag(String tag) {
 		
-		
-	
 		JsonObject tagObject = new JsonObject();
 		JsonArray similarsList = new JsonArray();
 		
@@ -297,18 +312,27 @@ public class MyLibrary {
 		}	
 	}
 	
-	
+	/**
+	 * Public method takes no input 
+	 * and returns the byArtist data structure
+	 * @return
+	 */
 	public TreeMap<String, TreeSet<SingleSongInfo>> getByArtist() {
 		
 		try { 
 			this.rwl.lockRead();
-			System.out.println("Why is it empty here" + this.byArtist.keySet());
+			
 			return this.byArtist;
 		} finally { 
 			this.rwl.unlockRead();
 		}
 	}
 	
+	/**
+	 * Public method takes no input 
+	 * and returns the byTitle data structure
+	 * @return
+	 */
 	public TreeMap<String, TreeSet<SingleSongInfo>> getByTitle() {
 		
 		try { 
@@ -320,6 +344,11 @@ public class MyLibrary {
 		}
 	}
 	
+	/**
+	 * Public method takes no input 
+	 * and returns the byTagToTrackId data structure
+	 * @return
+	 */
 	public TreeMap<String, TreeSet<String>> getByTagToTrackId() {
 		
 		try { 
@@ -331,6 +360,11 @@ public class MyLibrary {
 		}
 	}	
 	
+	/**
+	 * Public method takes no input 
+	 * and returns the byTrackId data structure
+	 * @return
+	 */
 	public TreeMap<String, SingleSongInfo> getByTrackId() {
 		
 		try { 
@@ -342,6 +376,15 @@ public class MyLibrary {
 		}
 	}	
 	
+	/**
+	 * Private method takes as input an input file 
+	 * with the list of artists, titles and tags 
+	 * to search
+	 * 
+	 * Returns a JsonObject with JsonArray's of searched items
+	 * @param inputFile
+	 * @return
+	 */
 	private JsonObject search(String inputFile) {
 		
 		Path path = Paths.get(inputFile);
@@ -412,6 +455,13 @@ public class MyLibrary {
 	}
 	
 	
+	/**
+	 * Public method calls private methods to 
+	 * help search items in input file
+	 * and writes to the output file 
+	 * @param inputFile
+	 * @param outputFile
+	 */
 	public void searchResultsOutput(String inputFile, String outputFile) {
 		
 		if (inputFile != null && outputFile != null) {

@@ -1,31 +1,31 @@
-//package songfinder;
-//
-//import java.io.BufferedWriter;
-//import java.io.FileNotFoundException;
-//import java.io.FileReader;
-//import java.io.IOException;
-//import java.nio.file.Files;
-//import java.nio.file.Path;
-//import java.nio.file.Paths;
-//import java.util.TreeSet;
-//
-//import com.google.gson.JsonArray;
-//import com.google.gson.JsonElement;
-//import com.google.gson.JsonObject;
-//import com.google.gson.JsonParser;
-//
-//import Generics.ReentrantLock;
-//
-//public class Searcher {
-//
-//	private MyLibrary library; // could it be that the library object here is not built?
-//	private ReentrantLock rwl;
-//	
-//	public Searcher() {
-//		 this.library = new MyLibrary();
-//		 this.rwl = new ReentrantLock();
-//		
-//	}
+package songfinder;
+
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.TreeSet;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import Generics.ReentrantLock;
+
+public class Searcher {
+
+	private MyLibrary library; // could it be that the library object here is not built?
+	private ReentrantLock rwl;
+	
+	public Searcher() {
+		 this.library = new MyLibrary();
+		 this.rwl = new ReentrantLock();
+		
+	}
 //
 //	
 //	private JsonArray createJson(TreeSet<String> result) {
@@ -256,4 +256,4 @@
 //			}
 //		}	
 //	}	
-//}
+}

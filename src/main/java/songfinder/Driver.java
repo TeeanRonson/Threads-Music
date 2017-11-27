@@ -28,7 +28,6 @@ public class Driver {
 		
 		MyLibrary ml = new MyLibrary();
 		LibraryBuilder lb = new LibraryBuilder();
-//		Searcher s = new Searcher();
 		
 		if (args.length != 6 && args.length != 8 && args.length != 12) {
 			System.out.println("Incorrect arguments length");
@@ -43,12 +42,9 @@ public class Driver {
 			String searchInput = "-searchInput";
 			String searchOutput = "-searchOutput";
 			
-		
-		
 			for (int i = 0; i < args.length - 1; i += 2) {
 				checker.put(args[i], args[i + 1]);
 			}
-		
 	
 			if (!checker.containsKey(input) || !checker.containsKey(output) || !checker.containsKey(order)) {
 				System.out.println("Incorrect arguments");
@@ -66,14 +62,9 @@ public class Driver {
 					checker.put(threads, "10");
 				}
 				
-				
 				ml = lb.buildLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
 				ml.artistAndTitleOutput(checker.get(output), checker.get(order));
-//				System.out.println(ml.getByArtist());
 				ml.searchResultsOutput(checker.get(searchInput), checker.get(searchOutput));
-//				System.out.println("Checking " + ml.getByArtist());
-//				s.searchResultsOutput(checker.get(searchInput), checker.get(searchOutput));
-				
 			}		
 		}
 	}	

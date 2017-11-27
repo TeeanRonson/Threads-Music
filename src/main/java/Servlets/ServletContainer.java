@@ -14,7 +14,7 @@ public class ServletContainer {
 	
 	public static void main(String[] args) throws Exception {
 		
-		Server server = new Server(8080);
+		Server server = new Server(8060);
         LibraryBuilder builder = new LibraryBuilder();
         MyLibrary library = builder.buildLibrary("input", 10);
 
@@ -25,18 +25,20 @@ public class ServletContainer {
 
 	    		public void contextDestroyed(ServletContextEvent sce) {
 				// TODO Auto-generated method stub
-				
 			}
 	    		
 			public void contextInitialized(ServletContextEvent sce) {
 				sce.getServletContext().setAttribute(BaseServlet.LIBRARY, library);
-			
 			}
-    	
         });
 
         servletHandler.addServlet(HomeServlet.class, "/home");
         servletHandler.addServlet(ArtistServlet.class, "/artist");
+        servletHandler.addServlet(ArtistInfoServlet.class, "/artistinfo");
+        servletHandler.addServlet(SongInfoServlet.class, "/songinfo");
+        servletHandler.addServlet(CookiesServlet.class, "/cookies");
+        
+        
         
         server.setHandler(servletHandler);
         server.start();
@@ -44,6 +46,5 @@ public class ServletContainer {
         // The use of server.join() will make the current thread join and
         // wait until the server is done executing.
         // See http://docs.oracle.com/javase/7/docs/api/java/lang/Thread.html#join()
-       
 	}
 }
