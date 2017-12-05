@@ -136,7 +136,7 @@ public class WorkQueue {
         				r.run();
         			}
         			catch (RuntimeException e) {
-        				e.getMessage();
+        				e.printStackTrace();
         				System.out.println("Rong, can't run exception occurring");
         			}
         		}

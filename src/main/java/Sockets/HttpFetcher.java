@@ -22,6 +22,7 @@ public class HttpFetcher {
 																//wrap the input stream to make it easier to read from
 				BufferedReader reader = new BufferedReader(new InputStreamReader(instream))
 		) { 
+		
 
 			//Send request
 			String request = getRequest(host, path);

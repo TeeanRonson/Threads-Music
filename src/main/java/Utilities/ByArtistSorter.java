@@ -2,7 +2,7 @@ package Utilities;
 
 import java.util.Comparator;
 
-import songfinder.SingleSongInfo;
+import BaseObjects.SingleSongInfo;
 
 public class ByArtistSorter implements Comparator<SingleSongInfo> {
 

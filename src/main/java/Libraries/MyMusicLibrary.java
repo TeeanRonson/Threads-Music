@@ -1,4 +1,4 @@
-package songfinder;
+package Libraries;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Set;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ import java.util.TreeSet;
 
 import Generics.ReentrantLock;
 import Utilities.ByArtistSorter;
+import Utilities.ByPlayCountSorter;
 import Utilities.ByTitleSorter;
 
 import java.util.Collections;
@@ -24,6 +27,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import BaseObjects.SingleArtistInfo;
+import BaseObjects.SingleSongInfo;
+
 /**
  * Constructor declaring private data members
  * byArtist as a TreeMap that stores artist's as keys and SingleSongInfo object as values
@@ -31,29 +37,34 @@ import com.google.gson.JsonParser;
  * byTag as a TreeMap to that stores tags as keys, and track id's as values 
  * @author Rong
  */
-public class MyLibrary {
+public class MyMusicLibrary {
 	private TreeMap<String, TreeSet<SingleSongInfo>> byArtist;	
 	private TreeMap<String, TreeSet<SingleSongInfo>> byTitle;
 	private TreeMap<String, TreeSet<String>> byTagToTrackId;
 	private TreeMap<String, SingleSongInfo> byTrackId;
+	private HashMap<String, String> caseArtist;
+	private HashMap<String, String> caseTitle;
+	private HashMap<String, String> caseTag;
 	private ReentrantLock rwl;
 	private ByArtistSorter sortArtist;
 	private ByTitleSorter sortTitle;
-
 	
 	/**
 	 * Constructor takes no inputs
 	 * Initialises private data members
 	 */
-	public MyLibrary() {
+	public MyMusicLibrary() {
 		this.byArtist = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTitle = new TreeMap<String, TreeSet<SingleSongInfo>>();
 		this.byTagToTrackId = new TreeMap<String, TreeSet<String>>();
 		this.byTrackId = new TreeMap<String, SingleSongInfo>();
+		this.caseArtist = new HashMap<String, String>();
+		this.caseTitle = new HashMap<String, String>();
+		this.caseTag = new HashMap<String, String>();
 		rwl = new ReentrantLock();
 		sortArtist = new ByArtistSorter();
 		sortTitle = new ByTitleSorter();
-	}
+	}	
 	
 	/**
 	 * Public method takes as input a SingleSongInfo object 
@@ -68,8 +79,31 @@ public class MyLibrary {
 		addByTitle(object);
 		addByTagToTrackId(object);
 		addByTrackId(object);
+//		addArtistName(object);
+//		addTitleName(object);
+//		addTagName();
 		this.rwl.unlockWrite();	
 	}
+	
+	/**
+	 * Project3 additional private methods
+	 */
+//	private void addArtistName(SingleSongInfo object) {
+//		
+//		this.caseArtist.put(object.getArtist().toLowerCase(), object.getArtist());
+//	}
+//	
+//	private void addTitleName(SingleSongInfo object) {
+//		
+//		this.caseTitle.put(object.getTitle().toLowerCase(), object.getTitle());
+//	}
+//	
+//	private void addTagName() {
+//		
+//		for (String x: this.byTagToTrackId.keySet()) {
+//			this.caseTag.put(x.toLowerCase(), x);
+//		}
+//	}
 	
 	/**
 	 * Private method takes as input a SingleSongInfo object
@@ -145,7 +179,6 @@ public class MyLibrary {
 	 */
 	private void addByTitle(SingleSongInfo object) {
 
-		
 		if (!this.byTitle.containsKey(object.getTitle())) {
 			TreeSet<SingleSongInfo> list = new TreeSet<SingleSongInfo>(sortTitle);
 			list.add(object);
@@ -157,6 +190,33 @@ public class MyLibrary {
 			list.add(object);
 		}
 	}	
+	
+	/**
+	 * Public method that calls a helper method to 
+	 * search by artist or title and returns a 
+	 * JsobObject in the specific format
+	 * @param item
+	 * @param type
+	 * @return
+	 */
+	public JsonObject searchHelper(String item, String type) {
+		
+			try { 
+				rwl.lockRead();
+			
+				TreeMap<String, TreeSet<SingleSongInfo>> data = new TreeMap<String, TreeSet<SingleSongInfo>>();
+				
+				if (type.equals("artist")) {
+					data = this.byArtist;
+				} else {
+					data = this.byTitle;
+				}
+		
+				return searchArtistOrTitle(item, data, type);
+			} finally { 
+				rwl.unlockRead();
+			}
+	}		
 	
 	/**
 	 * Private method creates JsonObjects and 
@@ -186,28 +246,33 @@ public class MyLibrary {
 	}
 	
 	/**
-	 * Public method takes as input a given artist 
-	 * and returns a JsonObject with the artist name
-	 * and a list of similar songs related to that artist
-	 * @param artist
+	 * Private method takes as input a given item 
+	 * which is either an artist or title name 
+	 * and returns a JsonObject with the item and 
+	 * a list of similar songs related to that item
+	 * @param item
 	 * @return
 	 */
-	public JsonObject searchByArtist(String artist) {
+	private JsonObject searchArtistOrTitle(String item, TreeMap<String, TreeSet<SingleSongInfo>> data, String type) {
 		
+		JsonObject object = new JsonObject();
 		JsonArray similarsList = new JsonArray();
-		JsonObject artistObject = new JsonObject();
 		TreeSet<String> result = new TreeSet<String>();	
 		
 		try { 
 			this.rwl.lockRead();
 			
-			if (this.byArtist.get(artist) == null) {
-				artistObject.addProperty("artist", artist);
-				artistObject.add("similars", similarsList);
-				
+			if (data.get(item) == null) {
+				 if (type.equals("artist")) {
+					object.addProperty("artist", item);
+					object.add("similars", similarsList);
+				} else {
+					object.addProperty("title", item);
+					object.add("similars", similarsList);
+				}
+				 
 			} else { 
-			
-				TreeSet<SingleSongInfo> songs = this.byArtist.get(artist); 
+				TreeSet<SingleSongInfo> songs = data.get(item); 
 				for (SingleSongInfo x: songs) {		
 					if (x != null) {
 						TreeSet<String> trackIds = x.getSimilarSongs();
@@ -218,55 +283,20 @@ public class MyLibrary {
 				}
 				
 				similarsList = createJson(result);
-				artistObject.addProperty("artist", artist);
-				artistObject.add("similars", similarsList);
-			}
-			return artistObject;	
+				
+				if (this.byArtist.containsKey(item)) {
+					object.addProperty("artist", item);
+					object.add("similars", similarsList);
+				} else if (this.byTitle.containsKey(item)) {
+					object.addProperty("title", item);
+					object.add("similars", similarsList);
+				}
+			}	
+			return object;	
 		} finally { 
 			this.rwl.unlockRead();
 		}
 	}	
-	
-	/**
-	 * Public method takes as input a given title 
-	 * and returns a JsonObject with the title name
-	 * and a list of similar songs related to that title
-	 * @param title
-	 * @return
-	 */
-	public JsonObject searchByTitle(String title) {
-		
-		JsonArray similarsList = new JsonArray();
-		JsonObject titleObject = new JsonObject();
-		TreeSet<String> result = new TreeSet<String>();
-		
-		try { 
-			
-			this.rwl.lockRead();
-				
-			if (this.byTitle.get(title) == null) {
-				titleObject.add("similars", similarsList);
-				titleObject.addProperty("title", title);
-				
-			} else { 
-				
-				TreeSet<SingleSongInfo> songs = this.byTitle.get(title);
-				for (SingleSongInfo x: songs) {
-					TreeSet<String> trackIds = x.getSimilarSongs();
-					for (String y: trackIds) {
-							result.add(y);
-					}	
-				}
-
-				similarsList = createJson(result);				
-				titleObject.addProperty("title", title);
-				titleObject.add("similars", similarsList);
-			}
-			return titleObject;
-			} finally { 
-				this.rwl.unlockRead();
-		}	
-	}
 	
 	/**
 	 * Public method takes as input a given tag and
@@ -301,10 +331,8 @@ public class MyLibrary {
 						similarsList.add(similarObject);
 					}	
 				}
-				
 				tagObject.addProperty("tag", tag);
 				tagObject.add("similars", similarsList);
-				
 			}
 			return tagObject;
 		} finally {
@@ -313,178 +341,199 @@ public class MyLibrary {
 	}
 	
 	/**
-	 * Public method takes no input 
-	 * and returns the byArtist data structure
+	 * Public method called by Servlets to retrieve
+	 * an artist name for a given trackId
+	 * @param trackId
 	 * @return
 	 */
-	public TreeMap<String, TreeSet<SingleSongInfo>> getByArtist() {
+	public String getName(String trackId) {
 		
 		try { 
-			this.rwl.lockRead();
-			
-			return this.byArtist;
-		} finally { 
-			this.rwl.unlockRead();
-		}
-	}
-	
-	/**
-	 * Public method takes no input 
-	 * and returns the byTitle data structure
-	 * @return
-	 */
-	public TreeMap<String, TreeSet<SingleSongInfo>> getByTitle() {
+			rwl.lockRead();
 		
-		try { 
-			this.rwl.lockRead();
-			
-			return this.byTitle;
+			String name = this.byTrackId.get(trackId).getArtist();
+			return name;
 		} finally { 
-			this.rwl.unlockRead();
-		}
-	}
-	
-	/**
-	 * Public method takes no input 
-	 * and returns the byTagToTrackId data structure
-	 * @return
-	 */
-	public TreeMap<String, TreeSet<String>> getByTagToTrackId() {
-		
-		try { 
-			this.rwl.lockRead();
-		
-			return this.byTagToTrackId;
-		} finally { 
-			this.rwl.unlockRead();
+			rwl.unlockRead();
 		}
 	}	
 	
 	/**
-	 * Public method takes no input 
-	 * and returns the byTrackId data structure
+	 * Public method called by Servlets to retrieve
+	 * a title name for a given trackId
+	 * @param trackId
 	 * @return
 	 */
-	public TreeMap<String, SingleSongInfo> getByTrackId() {
+	public String getTitle(String trackId) {
+		
+		try {
+			rwl.lockRead();
+		
+			String title = this.byTrackId.get(trackId).getTitle();
+			return title;
+		} finally { 
+			rwl.unlockRead();
+		}
+	}
+	
+	/**
+	 * Public method returns a JsonArray of JsonObjects
+	 * which contains information on each SingleSongInfo
+	 * object related to a given artist 
+	 * @param artist
+	 * @return
+	 */
+	public JsonArray getArtistSongs(String artist) {
 		
 		try { 
-			this.rwl.lockRead();
+			rwl.lockRead();
+	
+			JsonArray result = new JsonArray();
+			TreeSet<SingleSongInfo> songObjects = this.byArtist.get(artist);
+			for (SingleSongInfo x: songObjects) {
+				result.add(x.toJson());
+			}
+			return result;
+		} finally { 
+			rwl.unlockRead();
+		}
+	}
+	
+	/**
+	 * Public method returns a JsonArray of JsonObjects
+	 * which contains information on each SingleSongInfo
+	 * object related to a given title
+	 * @param title
+	 * @return
+	 */
+	public JsonArray getTitleSongs(String title) {
+			
+			try { 
+				rwl.lockRead();
+				
+				JsonArray result = new JsonArray();
+				TreeSet<SingleSongInfo> list = this.byTitle.get(title);
+				
+				for (SingleSongInfo x: list) {
+					result.add(x.toJson());
+				}
+				
+				return result;
+			} finally { 
+				rwl.unlockRead();
+			}
+			
+		}
+	
+	/**
+	 * Project 3 case sensitive method
+	 * @param artist
+	 * @param type
+	 * @return
+	 */
+	public JsonObject caseCheckArtist(String artist, String type) {
 
-			return this.byTrackId;
+		try { 
+			rwl.lockRead();
+		
+			JsonObject result = new JsonObject();
+			
+			result = searchHelper(this.caseArtist.get(artist), type);
+			
+//			if (result.equals(null)) {
+//				artist = partialSearch(artist, type);
+//				result = searchHelper(this.caseArtist.get(artist), type);
+//			}
+			return result;
 		} finally { 
-			this.rwl.unlockRead();
+			rwl.unlockRead();
 		}
 	}	
 	
 	/**
-	 * Private method takes as input an input file 
-	 * with the list of artists, titles and tags 
-	 * to search
-	 * 
-	 * Returns a JsonObject with JsonArray's of searched items
-	 * @param inputFile
+	 * Project 3 case sensitive method
+	 * @param title
+	 * @param type
 	 * @return
 	 */
-	private JsonObject search(String inputFile) {
+	public JsonObject caseCheckTitle(String title, String type) {
 		
-		Path path = Paths.get(inputFile);
-		JsonObject dummy = new JsonObject();
-		JsonObject searched = new JsonObject();
-		JsonArray artistArray = new JsonArray();
-		JsonArray titleArray = new JsonArray();
-		JsonArray tagArray = new JsonArray();
+		try { 
+			rwl.lockRead();
+		
+			JsonObject result = new JsonObject();
 			
-		if (!path.toString().toLowerCase().endsWith(".json")) {
-			System.out.println("Not a json file");
+			result = searchHelper(this.caseTitle.get(title), type);
 			
-		} else { 
-				
-			try (FileReader fr = new FileReader(path.toFile().getAbsolutePath())) {
-				
-				JsonParser parser = new JsonParser();
-				JsonElement element = parser.parse(fr);
-				JsonObject obj = element.getAsJsonObject();
-				
-				JsonArray getArtist = obj.getAsJsonArray("searchByArtist");
-				JsonArray getTitle = obj.getAsJsonArray("searchByTitle");
-				JsonArray getTag = obj.getAsJsonArray("searchByTag");
-				
-				if (getArtist != null) {
-					for (int i = 0; i < getArtist.size(); i++) {
-						dummy = searchByArtist(getArtist.get(i).getAsString());	
-						artistArray.add(dummy);
-					}
-				}	
-				
-				if (getTag != null) {
-					for (int i = 0; i < getTag.size(); i++) {
-						dummy = searchByTag(getTag.get(i).getAsString());
-						tagArray.add(dummy);
-					}
-				}	
-				
-				if (getTitle != null) {
-					for (int i = 0; i < getTitle.size(); i++) {
-						dummy = searchByTitle(getTitle.get(i).getAsString());
-						titleArray.add(dummy);
-					}
-				}	
-				
-				if (artistArray.size() != 0) {
-					searched.add("searchByArtist", artistArray);
-				}
-				
-				if (titleArray.size() != 0) {
-					searched.add("searchByTitle", titleArray);
-				}	
-				
-				if (tagArray.size() != 0) {
-					searched.add("searchByTag", tagArray);
-				}
-				
-			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			if (result.equals(null)) {
+//				title = partialSearch(title, type);
+//				result = searchHelper(this.caseTitle.get(title), type);
+//			}
 			
+			return result;
+		} finally { 
+			rwl.unlockRead();
 		}
-		
-		return searched;
-		
 	}
 	
-	
 	/**
-	 * Public method calls private methods to 
-	 * help search items in input file
-	 * and writes to the output file 
-	 * @param inputFile
-	 * @param outputFile
+	 * Project 3 case sensitive method
+	 * @param tag
+	 * @return
 	 */
-	public void searchResultsOutput(String inputFile, String outputFile) {
+	public JsonObject caseCheckTag(String tag) {
 		
-		if (inputFile != null && outputFile != null) {
+		try { 
+			rwl.lockRead();
 		
-			Path outPath = Paths.get(outputFile);
-			outPath.getParent().toFile().mkdirs();
+			JsonObject result = new JsonObject();
 			
-			try {
-				
-				this.rwl.lockRead();
+			result = searchByTag(this.caseTag.get(tag));
 			
-				try (BufferedWriter out = Files.newBufferedWriter(outPath)) {
-					
-					out.write(search(inputFile).toString());
-					
-				} catch (IOException e) {
-				e.getMessage();
-				}
-			} finally {
-				this.rwl.unlockRead();
-			}
-		}	
-	}			
+//			if (result.equals(null)) {
+//				tag = partialSearch(tag, "tag");
+//				result = searchByTag(this.caseTag.get(tag));
+//			}
+			return result;
+		} finally { 
+			rwl.unlockRead();
+		}
+	}	
+	
+//	private String partialSearch(String item, String type) {
+//		
+//		
+//		String newItem = "";
+//		if (type.equals("artist")) {
+//			for (String x: this.caseArtist.keySet()) {
+//				if (x.contains(item)) {
+//					newItem = x;
+//				}
+//				break;
+//			}
+//		}
+//		
+//		else if (type.equals("title")) {
+//			for (String x: this.caseTitle.keySet()) {
+//				if (x.contains(item)) {
+//					newItem = x;
+//				}
+//				break;
+//			}
+//		}
+//		
+//		else {
+//			for (String x: this.caseTag.keySet()) {
+//				if (x.contains(item)) {
+//					newItem = x;
+//				}
+//				break;
+//			}
+//		}
+//	
+//		return newItem;
+//	} 
+
 	
 	/**
 	 * Public method takes as input the output directory

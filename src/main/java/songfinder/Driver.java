@@ -12,6 +12,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import Libraries.MyArtistLibrary;
+import Libraries.MyMusicLibrary;
 import Utilities.RejectedExecutionException;
 
 /**
@@ -25,9 +27,6 @@ public class Driver {
 	 * @param args
 	 */
 	public static void main(String[] args) throws RejectedExecutionException {
-		
-		MyLibrary ml = new MyLibrary();
-		LibraryBuilder lb = new LibraryBuilder();
 		
 		if (args.length != 6 && args.length != 8 && args.length != 12) {
 			System.out.println("Incorrect arguments length");
@@ -62,9 +61,14 @@ public class Driver {
 					checker.put(threads, "10");
 				}
 				
-				ml = lb.buildLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
+				MyMusicLibrary ml;
+				LibraryBuilder lb = new LibraryBuilder();
+				Searcher s = null;
+				
+				ml = lb.buildMusicLibrary(checker.get(input), Integer.valueOf(checker.get(threads)));
 				ml.artistAndTitleOutput(checker.get(output), checker.get(order));
-				ml.searchResultsOutput(checker.get(searchInput), checker.get(searchOutput));
+				s = new Searcher(ml);
+				s.searchResultsOutput(checker.get(searchInput), checker.get(searchOutput));
 			}		
 		}
 	}	

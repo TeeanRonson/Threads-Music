@@ -19,20 +19,22 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import Generics.WorkQueue;
+import Libraries.MyArtistLibrary;
+import Libraries.MyMusicLibrary;
 import Utilities.RejectedExecutionException;
 
 public class LibraryBuilder {
 	/**
 	 * Declares a private data member
 	 */
-	private MyLibrary addToLibrary;
+	private MyMusicLibrary addToLibrary;
 	private MyArtistLibrary addToArtiLibrary; 
 	/**
 	 * Constructor takes no input and initialises
 	 * the private data member
 	 */
 	public LibraryBuilder() {
-		this.addToLibrary = new MyLibrary();
+		this.addToLibrary = new MyMusicLibrary();
 		this.addToArtiLibrary = new MyArtistLibrary();
 	}
 	
@@ -46,7 +48,7 @@ public class LibraryBuilder {
 	 * @throws RejectedExecutionException 
 	 * @throws InterruptedException 
 	 */
-	public MyLibrary buildLibrary(String directory, int threadsSize) {
+	public MyMusicLibrary buildMusicLibrary(String directory, int threadsSize) {
 		
 		Path path = Paths.get(directory);
 		WorkQueue wq = new WorkQueue(threadsSize); 
@@ -55,7 +57,32 @@ public class LibraryBuilder {
 			
 			paths.forEach(p -> {
 				try {
-					wq.execute(new Worker(this.addToLibrary, p, addToArtiLibrary));
+					wq.execute(new SongWorker(this.addToLibrary, p, this.addToArtiLibrary));
+					
+				} catch (RejectedExecutionException e) {
+					System.out.println("Queue has been closed");
+				}
+			});
+		
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+		wq.shutDown();
+		wq.awaitTermination();
+		return this.addToLibrary;
+	}
+	
+	public MyArtistLibrary buildArtistLibrary(String directory, int threadsSize) {
+		
+		Path path = Paths.get(directory);
+		WorkQueue wq = new WorkQueue(threadsSize); 
+		
+		try (Stream<Path> paths = Files.walk(path)) {
+			
+			paths.forEach(p -> {
+				try {
+					wq.execute(new ArtistWorker(this.addToArtiLibrary, p));
 					
 				} catch (RejectedExecutionException e) {
 					System.out.println("Queue has been closed");
@@ -66,10 +93,9 @@ public class LibraryBuilder {
 			System.out.println(e.getMessage());
 		}
 		
-		
 		wq.shutDown();
 		wq.awaitTermination();
-		
-		return this.addToLibrary;
+		return this.addToArtiLibrary;
 	}
+	
 }

@@ -2,19 +2,23 @@ package Servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import songfinder.MyLibrary;
+import Libraries.MyMusicLibrary;
 
 public class BaseServlet extends HttpServlet {
 
 	public static final String LIBRARY = "library";
-	public static final String NAME = "name";
-	public static final String NOT_LOGGED_IN = "not_logged_in ";
+	public static final String ARTISTLIBRARY = "artistLibrary";
+	public static final String USERLIBRARY = "userlibrary";
+	public static final String USERNAME = "username";
+	public static final String LOG = "log";
+	public static final String LOGGED_IN = "logged_in ";
 	
 	/*
 	 * Prepare a response of HTML 200 - OK.
@@ -31,17 +35,29 @@ public class BaseServlet extends HttpServlet {
 		return "<p>" + word + "</p>";
 	}
 
+	protected String header() {
+		return "<html><style>";
+	}
+	
+	protected String closeStyle() {
+		return "</style>";
+	}
+	
 	/*
 	 * Return the beginning part of the HTML page.
 	 */
-	protected String header(String title) {
-		return "<html><head><title>" + title + "</title></head><body>";		
+	protected String body(String title) {
+		return "<head><title>" + title + "</title></head><body>";		
 	}
 
+	protected String footer() {
+		return "<footer><center> Copyright &copy; The Threads Music Company </center></footer>";
+	}
+	
 	/*
 	 * Return the last part of the HTML page. 
 	 */
-	protected String footer() {
+	protected String end() {
 		return "</body></html>";
 	}
 	
