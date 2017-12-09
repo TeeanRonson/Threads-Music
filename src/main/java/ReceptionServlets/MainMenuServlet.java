@@ -10,6 +10,9 @@ import Servlets.BaseServlet;
 
 public class MainMenuServlet extends BaseServlet {
 	
+	/** 
+	 * Servlet that navigates the user to either the 'Login' page or the 'Sign in' page
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/html");
@@ -18,8 +21,8 @@ public class MainMenuServlet extends BaseServlet {
 		PrintWriter out = response.getWriter();
 	
 		out.println(header());
-		out.println("button { background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
-		out.println(".loginbtn { padding: 14px 20px; background-color: #f44336; }");
+		out.println("button { background-color: #000000; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
+		out.println(".loginbtn { padding: 14px 20px; background-color: #000000; }");
 		out.println(".loginbtn.signupbtn { float: left; width: 50%; }");
 		out.println(".container { padding: 16px; } ");
 		out.println(".clearfix: after { content: \"\"; clear: both; display: table; }");
@@ -28,7 +31,6 @@ public class MainMenuServlet extends BaseServlet {
 		out.println(closeStyle());
 		out.println(body("ThreadsMusic"));
 		out.println("<center>");
-		out.println("<h1><center>Threads Music</center></h1>");
 		out.println("<img src=\"http://i64.tinypic.com/jkvnlz.jpg\" height= \"550\" width=\"850\">");
 		out.println("<form id=\"menu1\" action=\"login\" method=\"get\" style=\"border:1px solid #ccc\">	");
 		out.println("<div class=\"clearfix\">");

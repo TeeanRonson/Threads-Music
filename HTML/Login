@@ -1,0 +1,84 @@
+<html>
+<style>
+
+input[type=text], input[type=password] {
+	width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+button {
+	background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.container {
+    padding: 16px;
+}
+
+.signupbtn {
+    float: left;
+    width: 100%;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+</style>	
+<body>
+	
+<h1>Threads Music</h1>
+<h3>Login</h3>
+
+<form id="login" action="LoginServlet" method="post" style="border:1px solid #ccc">  
+	<div class="container">
+		<label><b> Username </b></label>
+		<input type="text" placeholder="Username" name="Username" required>
+
+		<label><b> Password </b></label>
+		<input type="password" placeholder="Password" name="password" required="">
+
+	<div class="clearfix">
+		<button type="submit" class="signupbtn">Login</button>
+	</div>
+	</div>		
+</form> 
+
+		 
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

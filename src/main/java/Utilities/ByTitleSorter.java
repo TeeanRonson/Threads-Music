@@ -4,6 +4,15 @@ import java.util.Comparator;
 
 import BaseObjects.SingleSongInfo;
 
+/**
+ * Comparator to sort data structures. 
+ * Pecking order: 
+ * Title 
+ * Artist 
+ * TrackId
+ * @author Rong
+ *
+ */
 public class ByTitleSorter implements Comparator<SingleSongInfo> {
 	
 	@Override

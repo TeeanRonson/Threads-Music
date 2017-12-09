@@ -1,0 +1,26 @@
+<html>
+	<head>	
+		<title>SongFinder</title>
+	</head>
+	   <body>
+    		<h1>Song Finder</h1>
+	    	<p>Welcome to SongFinder! Search for an artist, song title or tag and we will give you a list of similar songs you might like </p>
+	    	<hr/>
+    		<p>
+                <form id="newsearch" method="get" action="songs">
+                <label> Search type: </label>    
+    			<select options: "choices" name="type">
+    				<option value = "artist">Artist</option>	
+    				<option value = "title">Title</option>	
+    				<option value = "tag">Tag</option>	
+    			</select>
+
+                <label>Query: </label>
+                <input type="text" class="tftextinput" name="query" size="21" maxlength="60"><input type="submit" value="submit" class="tfbutton">
+                </form>
+                <div class="tfclear"></div>
+                </div>
+            </p>
+	    	
+	</body>
+</html>

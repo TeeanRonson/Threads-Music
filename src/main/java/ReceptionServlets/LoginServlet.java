@@ -14,7 +14,13 @@ import Servlets.BaseServlet;
 
 public class LoginServlet extends BaseServlet {
 	
-
+	
+	/** 
+	 * Servlet that allows users with accounts to Log In. 
+	 * 
+	 * If Username and password does not exist, returns a page allowing a user to either
+	 * create a new account or return to the main menu.  
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/html");
@@ -24,7 +30,7 @@ public class LoginServlet extends BaseServlet {
 		
 		out.println(header());
 		out.println("input[type=text], input[type=password] { width: 100%; padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc; box-sizing: border-box }");
-		out.println("button { background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
+		out.println("button { background-color: #000000; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
 		out.println(".container { padding: 16px; }");
 		out.println(".signupbtn { float: left; width: 100% }");
 		out.println(".clearfix::after { content: \"\"; clear: both; display: table;}");
@@ -59,6 +65,7 @@ public class LoginServlet extends BaseServlet {
 		PrintWriter out = response.getWriter();
 		
 		String username = request.getParameter("username").toLowerCase();
+		String displayName = request.getParameter("username");
 		String password = request.getParameter("password").toLowerCase();
 		String newLogin = LocalDateTime.now().toString();
 		
@@ -66,6 +73,7 @@ public class LoginServlet extends BaseServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute(LOGGED_IN, true);
 			session.setAttribute(USERNAME, username);
+			session.setAttribute(DISPLAYNAME, displayName);
 			uLibrary.setNewLogin(username, newLogin);
 			response.sendRedirect("/home");
 
@@ -73,7 +81,7 @@ public class LoginServlet extends BaseServlet {
 	 		
 	 		out.println(header());
 			out.println("input[type=text], input[type=password] { width: 100%; padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc; box-sizing: border-box }");
-			out.println("button { background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
+			out.println("button { background-color: #000000; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
 			out.println(".container { padding: 16px; }");
 			out.println(".signupbtn { float: left; width: 100% }");
 			out.println(".clearfix::after { content: \"\"; clear: both; display: table;}");

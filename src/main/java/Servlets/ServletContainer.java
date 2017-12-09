@@ -18,6 +18,12 @@ import songfinder.LibraryBuilder;
 
 public class ServletContainer {
 	
+	/**
+	 * Stores multiple libraries in the context to be accessed by the Servlets 
+	 * Redirects incoming HTTP requests to the respective servlets
+	 * @param args
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		
 		Server server = new Server(8060);
@@ -50,6 +56,7 @@ public class ServletContainer {
         servletHandler.addServlet(ArtistInfoServlet.class, "/artistinfo");
         servletHandler.addServlet(SongInfoServlet.class, "/songinfo");
         servletHandler.addServlet(HistoryServlet.class, "/history");
+        servletHandler.addServlet(SuggestedServlet.class, "/suggested");
         
         
         server.setHandler(servletHandler);

@@ -15,6 +15,12 @@ import Servlets.BaseServlet;
 
 public class NewAccountServlet extends BaseServlet {
 	
+	/** 
+	 * Servlet that allows a new user to create an account with Threads Music. 
+	 * 
+	 * When a new account is created, a new SinlgeUserInfo object is created.
+	 * SingleUserInfo object stores information related to the user.  
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	
 		response.setContentType("text/html");
@@ -24,8 +30,8 @@ public class NewAccountServlet extends BaseServlet {
 		
 		out.println(header());
 		out.println("input[type=text], input[type=password] { width: 100%; padding: 12px 20px; margin: 8px 0;display: inline-block;border: 1px solid #ccc; box-sizing: border-box }");
-		out.println("button { background-color: #4CAF50; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
-		out.println(".cancelbtn { padding: 14 px 20px; background-color: #f44336; }");
+		out.println("button { background-color: #000000; color: white; padding: 14px 20px; margin: 8px 0; border: none; cursor: pointer; width: 100%; }");
+		out.println(".cancelbtn { padding: 14 px 20px; background-color: #000000; }");
 		out.println(".cancelbtn,.signupbtn { float:left; width 50%; }");
 		out.println(".container { padding: 16px; } ");
 		out.println("clearfix: after { content: \"\"; clear: both; display: table: }");
@@ -62,6 +68,7 @@ public class NewAccountServlet extends BaseServlet {
 		SingleUserInfo sui = null;
 
 		String username = request.getParameter("username").toLowerCase();
+		String displayName = request.getParameter("username");
 		String password = request.getParameter("password").toLowerCase();
 		String newLogin = LocalDateTime.now().toString();
 		String lastLogin = "-";
@@ -74,6 +81,7 @@ public class NewAccountServlet extends BaseServlet {
 			HttpSession session = request.getSession();
 			session.setAttribute(LOGGED_IN, true);
 			session.setAttribute(USERNAME, username);
+			session.setAttribute(DISPLAYNAME, displayName);
 			
 			response.sendRedirect("/home");
 		}	

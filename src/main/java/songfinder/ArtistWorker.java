@@ -14,17 +14,43 @@ import BaseObjects.SingleArtistInfo;
 import Libraries.MyArtistLibrary;
 import Sockets.HttpFetcher;
 
+/**
+ * Worker class that implements Runnable
+ * Each new Worker object will be passed into 
+ * the WorkQueue method 'execute'.
+ * 
+ * Private data members 
+ * @author Rong
+ *
+ */
 public class ArtistWorker implements Runnable {
 	
 	private MyArtistLibrary addToArtiLibrary;
 	private Path p;
 
+	/**
+	 * Initialises two private data members
+	 * to be the values passed into the constructor 
+	 * @param addTolibrary
+	 * @param p
+	 */
 	public ArtistWorker(MyArtistLibrary addToALibrary, Path p) {
 		this.addToArtiLibrary = addToALibrary;
 		this.p = p;
 		
 	}
 	
+	/**Run method of the Worker class
+	 * Processes only .json files
+	 * Reads in data from the .json files and returns 
+	 * a SingleArtistInfo object with the extracted  
+	 * information from the Last.FM API
+	 * 
+	 * Adds the valid SingleArtistInfo object to 
+	 * MyArtistLibrary class
+	 * @param p
+	 * @return
+	 */
 	@Override
 	public void run() {
 		

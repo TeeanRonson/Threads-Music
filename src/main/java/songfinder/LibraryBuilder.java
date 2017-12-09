@@ -57,7 +57,7 @@ public class LibraryBuilder {
 			
 			paths.forEach(p -> {
 				try {
-					wq.execute(new SongWorker(this.addToLibrary, p, this.addToArtiLibrary));
+					wq.execute(new SongWorker(this.addToLibrary, p));
 					
 				} catch (RejectedExecutionException e) {
 					System.out.println("Queue has been closed");
@@ -73,6 +73,15 @@ public class LibraryBuilder {
 		return this.addToLibrary;
 	}
 	
+	/**
+	 * Public method takes as input the input directory. 
+	 * Converts the directory into a Path object and 
+	 * walks the file path to extract all files in 
+	 * all sub-folders
+	 * @param directory
+	 * @param threadsSize
+	 * @return
+	 */
 	public MyArtistLibrary buildArtistLibrary(String directory, int threadsSize) {
 		
 		Path path = Paths.get(directory);

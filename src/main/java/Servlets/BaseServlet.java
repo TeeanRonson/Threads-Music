@@ -11,12 +11,22 @@ import javax.servlet.http.HttpServletResponse;
 
 import Libraries.MyMusicLibrary;
 
+/**
+ * BaseServlet acts as parent to all other classes
+ * Stores several protected methods to easily implement 
+ * repetitive html outputs.
+ * 
+ * Stores certain final variables used for sessions
+ * @author Rong
+ *
+ */
 public class BaseServlet extends HttpServlet {
 
 	public static final String LIBRARY = "library";
 	public static final String ARTISTLIBRARY = "artistLibrary";
 	public static final String USERLIBRARY = "userlibrary";
 	public static final String USERNAME = "username";
+	public static final String DISPLAYNAME = "displayName";
 	public static final String LOG = "log";
 	public static final String LOGGED_IN = "logged_in ";
 	
@@ -59,26 +69,6 @@ public class BaseServlet extends HttpServlet {
 	 */
 	protected String end() {
 		return "</body></html>";
-	}
-	
-	/*
-	 * Given a request, return the name found in the 
-	 * Cookies provided.
-	 */
-	protected String getCookieValue(HttpServletRequest request, String key) {
-		Cookie[] cookies = request.getCookies();
-
-		String name = null;
-		
-		if(cookies != null) {
-			//for each cookie, if the key is name, store the value
-			for(Cookie c: cookies) {
-				if(c.getName().equals(key)) {
-					name = c.getValue();
-				}
-			}
-		}
-		return name;
 	}
 
 	/*

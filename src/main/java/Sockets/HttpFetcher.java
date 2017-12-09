@@ -7,6 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
+/** 
+ * Creates a connection to the server and pulls 
+ * in new information from the Web Api 
+ * @author Rong
+ */
 public class HttpFetcher {
 
 	public static int PORT = 80;
@@ -44,6 +49,12 @@ public class HttpFetcher {
 		return buffer.toString();
 	}
 
+	/**
+	 * Private method creates the request format
+	 * @param host
+	 * @param path
+	 * @return
+	 */
 	private static String getRequest(String host, String path) {
 		
 		String request = "GET " + path + " HTTP/1.1" + "\n" 	//GET request

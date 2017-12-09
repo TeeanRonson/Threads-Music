@@ -124,6 +124,8 @@ public class WorkQueue {
         					}
         				}
         				
+        				
+        				
         				if (shutDown == true && queue.isEmpty()) {
         					break;
         				}

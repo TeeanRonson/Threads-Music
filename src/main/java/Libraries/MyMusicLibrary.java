@@ -79,31 +79,31 @@ public class MyMusicLibrary {
 		addByTitle(object);
 		addByTagToTrackId(object);
 		addByTrackId(object);
-//		addArtistName(object);
-//		addTitleName(object);
-//		addTagName();
+		addArtistName(object);
+		addTitleName(object);
+		addTagName();
 		this.rwl.unlockWrite();	
 	}
 	
 	/**
 	 * Project3 additional private methods
 	 */
-//	private void addArtistName(SingleSongInfo object) {
-//		
-//		this.caseArtist.put(object.getArtist().toLowerCase(), object.getArtist());
-//	}
-//	
-//	private void addTitleName(SingleSongInfo object) {
-//		
-//		this.caseTitle.put(object.getTitle().toLowerCase(), object.getTitle());
-//	}
-//	
-//	private void addTagName() {
-//		
-//		for (String x: this.byTagToTrackId.keySet()) {
-//			this.caseTag.put(x.toLowerCase(), x);
-//		}
-//	}
+	private void addArtistName(SingleSongInfo object) {
+		
+		this.caseArtist.put(object.getArtist().toLowerCase(), object.getArtist());
+	}
+	
+	private void addTitleName(SingleSongInfo object) {
+		
+		this.caseTitle.put(object.getTitle().toLowerCase(), object.getTitle());
+	}
+	
+	private void addTagName() {
+		
+		for (String x: this.byTagToTrackId.keySet()) {
+			this.caseTag.put(x.toLowerCase(), x);
+		}
+	}
 	
 	/**
 	 * Private method takes as input a SingleSongInfo object
@@ -262,7 +262,8 @@ public class MyMusicLibrary {
 		try { 
 			this.rwl.lockRead();
 			
-			if (data.get(item) == null) {
+			
+			if (!data.containsKey(item)) {
 				 if (type.equals("artist")) {
 					object.addProperty("artist", item);
 					object.add("similars", similarsList);
@@ -426,7 +427,7 @@ public class MyMusicLibrary {
 		}
 	
 	/**
-	 * Project 3 case sensitive method
+	 * Method that solves case sensitivity for all artists queried by the user.
 	 * @param artist
 	 * @param type
 	 * @return
@@ -437,11 +438,15 @@ public class MyMusicLibrary {
 			rwl.lockRead();
 		
 			JsonObject result = new JsonObject();
-			
-			result = searchHelper(this.caseArtist.get(artist), type);
+			if (this.caseArtist.containsKey(artist)) {
+				result = searchHelper(this.caseArtist.get(artist), type);
+			}
 			
 //			if (result.equals(null)) {
-//				artist = partialSearch(artist, type);
+//				TreeSet<String> related = partialSearch(artist,type);
+//				for (String x: related) {
+//					
+//				}
 //				result = searchHelper(this.caseArtist.get(artist), type);
 //			}
 			return result;
@@ -451,7 +456,7 @@ public class MyMusicLibrary {
 	}	
 	
 	/**
-	 * Project 3 case sensitive method
+	 * Method that solves case sensitivity for all titles queried by the user. 
 	 * @param title
 	 * @param type
 	 * @return
@@ -462,8 +467,9 @@ public class MyMusicLibrary {
 			rwl.lockRead();
 		
 			JsonObject result = new JsonObject();
-			
-			result = searchHelper(this.caseTitle.get(title), type);
+			if (this.caseTitle.containsKey(title)) {
+				result = searchHelper(this.caseTitle.get(title), type);
+			}	
 			
 //			if (result.equals(null)) {
 //				title = partialSearch(title, type);
@@ -477,7 +483,7 @@ public class MyMusicLibrary {
 	}
 	
 	/**
-	 * Project 3 case sensitive method
+	 * Method that solves case sensitivity for all tags queried by the user.  
 	 * @param tag
 	 * @return
 	 */
@@ -500,39 +506,84 @@ public class MyMusicLibrary {
 		}
 	}	
 	
-//	private String partialSearch(String item, String type) {
-//		
-//		
-//		String newItem = "";
-//		if (type.equals("artist")) {
-//			for (String x: this.caseArtist.keySet()) {
-//				if (x.contains(item)) {
-//					newItem = x;
-//				}
-//				break;
-//			}
-//		}
-//		
-//		else if (type.equals("title")) {
-//			for (String x: this.caseTitle.keySet()) {
-//				if (x.contains(item)) {
-//					newItem = x;
-//				}
-//				break;
-//			}
-//		}
-//		
-//		else {
-//			for (String x: this.caseTag.keySet()) {
-//				if (x.contains(item)) {
-//					newItem = x;
-//				}
-//				break;
-//			}
-//		}
-//	
-//		return newItem;
-//	} 
+	
+	/** 
+	 * Partial search method. Allows the user to enter only part of an artist, title, 
+	 * or tag and return relevant results.
+	 * @param item
+	 * @param type
+	 * @return
+	 */
+	public JsonObject partialSearch(String item, String type) {
+		
+		JsonObject singleObject = new JsonObject();
+		JsonObject returnObject = new JsonObject();
+		JsonArray similarsArray = new JsonArray();
+		JsonArray result = new JsonArray();
+		
+		TreeSet<String> related = partialSearchHelper(item, type);
+		
+		if (type.equals("tag")) {
+			for (String x: related) {
+				singleObject = searchByTag(x);
+				similarsArray = singleObject.get("similars").getAsJsonArray();
+				for (JsonElement y: similarsArray) {
+					result.add(y);
+				}
+			}
+			
+		} else {
+			for (String x: related) {
+				singleObject = searchHelper(x, type);
+				similarsArray = singleObject.get("similars").getAsJsonArray();
+				for (JsonElement y: similarsArray) {
+					result.add(y);
+				}
+			}	
+			returnObject.add("similars", result);
+		}	
+		
+		return returnObject;
+	}
+	
+	/**
+	 * Private method called by partialSearch to obtain 
+	 * all items that contains elements of the query.
+	 * @param item
+	 * @param type
+	 * @return
+	 */
+	private TreeSet<String> partialSearchHelper(String item, String type) {
+		
+		TreeSet<String> related = new TreeSet<String>();
+		
+		if (type.equals("artist")) {
+			for (String x: this.caseArtist.keySet()) {
+				if (x.contains(item)) {
+					related.add(this.caseArtist.get(x));
+				}
+			}
+		}
+		
+		else if (type.equals("title")) {
+			for (String x: this.caseTitle.keySet()) {
+				if (x.contains(item)) {
+					related.add(this.caseTitle.get(x));
+				}
+			}
+		}
+		
+		else {
+			for (String x: this.caseTag.keySet()) {
+				if (x.contains(item)) {
+					related.add(this.caseTag.get(x));
+				}
+			}
+		}
+	
+		System.out.println(related);
+		return related;
+	} 
 
 	
 	/**
