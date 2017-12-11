@@ -12,6 +12,7 @@ public class MainMenuServlet extends BaseServlet {
 	
 	/** 
 	 * Servlet that navigates the user to either the 'Login' page or the 'Sign in' page
+	 * https://www.w3schools.com/
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

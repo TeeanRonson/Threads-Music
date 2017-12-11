@@ -15,6 +15,7 @@ public class LogoutServlet extends BaseServlet {
 	
 	/**
 	 * Servlet that redirects to the Main Menu page after terminating the users session. 
+	 * https://www.w3schools.com/
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		

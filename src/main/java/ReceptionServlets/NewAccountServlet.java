@@ -20,6 +20,8 @@ public class NewAccountServlet extends BaseServlet {
 	 * 
 	 * When a new account is created, a new SinlgeUserInfo object is created.
 	 * SingleUserInfo object stores information related to the user.  
+	 * 
+	 * https://www.w3schools.com/
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	

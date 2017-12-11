@@ -20,6 +20,7 @@ public class LoginServlet extends BaseServlet {
 	 * 
 	 * If Username and password does not exist, returns a page allowing a user to either
 	 * create a new account or return to the main menu.  
+	 * https://www.w3schools.com/
 	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 

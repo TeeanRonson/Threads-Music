@@ -19,8 +19,6 @@ import Libraries.MyUserLibrary;
 import songfinder.LibraryBuilder;
 
 public class HomeServlet extends BaseServlet {
-	
-	
 	/** 
 	 * Servlet that acts as the home page of the Threads Music web application 
 	 * 
@@ -45,9 +43,8 @@ public class HomeServlet extends BaseServlet {
 			response.setStatus(HttpServletResponse.SC_OK);
 			
 			PrintWriter out = response.getWriter();
-			
+
 			out.println(header());
-			out.println("body { background image: url(\"http://i68.tinypic.com/2sb1izm.jpg\" border=\"0\" alt=\"Image and video hosting by TinyPic\"");
 			out.println(closeStyle());
 			out.println(body("Threads Music"));
 			out.println("<center>");
@@ -56,6 +53,7 @@ public class HomeServlet extends BaseServlet {
 			out.println("<p>" + displayName + "</p>");
 			out.println("<p> Last login: " + lastLogin + "</p>");
 			out.println("<hr/>");
+			out.println("<img src=\"http://i68.tinypic.com/2doo4i.jpg\" height=\"200\" width=\"1500\" style=\"float:middle;\"/>");
 			out.println("<p><form method=\"post\" action=\"home\"");
 			out.println("<label>Search type:</label>");
 			out.println("<select options: \"choices\" name=\"type\">");
@@ -180,27 +178,14 @@ public class HomeServlet extends BaseServlet {
 		
 		if (type.equals("artist")) {
 			object = mLibrary.caseCheckArtist(query, "artist");
-			System.out.println(object);
-			System.out.println("hello");
-			if (object.equals(null)) {
-				System.out.println("did we get here");
-				object = mLibrary.partialSearch(query, "artist");
-				
-			}
 		}	
 
 		if (type.equals("title")) {
 			object = mLibrary.caseCheckTitle(query, "title");
-			if (object.equals(null)) {
-				object = mLibrary.partialSearch(query, "title");
-			}
 		}
 		
 		if (type.equals("tag")) {
 			object = mLibrary.caseCheckTag(query);
-			if (object.equals(null)) {
-				object = mLibrary.partialSearch(query, "tag");
-			}
 		}
 		
 		if (object.get("similars") != null) {
