@@ -21,8 +21,10 @@ This repository contains the following:
 - `.travis.yml` - this is the file that will tell Travis which test cases to run. It is currently configured to run only the Lab 3 test cases. 
 
 
-```
-
+```go
+type ProductData struct {
+  ProductId 32
+}
 console.log('Hello, World')
 
 ```
